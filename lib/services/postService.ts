@@ -2,6 +2,7 @@
 import {
   collection,
   doc,
+  addDoc,
   getDoc,
   getDocs,
   query,
@@ -13,10 +14,56 @@ import {
   arrayRemove,
   limit,
   startAfter,
-  DocumentSnapshot
+  DocumentSnapshot,
+  serverTimestamp
 } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
 import { PostDetail, PostSummary, TempRange, Gender } from '../../types';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+export interface CreatePostData {
+  file: File;
+  content: string;
+  tempRange: TempRange;
+  region: string;
+  outfitDate: Date;
+  userId: string;
+  gender: string;
+}
+
+export const createPost = async (data: CreatePostData): Promise<string> => {
+  try {
+    const { file, content, tempRange, region, outfitDate, userId, gender } = data;
+
+    const postsRef = collection(db, "posts");
+    const docRef = await addDoc(postsRef, {
+      userId: userId,
+      post: content,
+      photo: "",
+      tempRange,
+      region,
+      outfitDate: outfitDate.toISOString(),
+      gender,
+      likes: 0,
+      likedBy: [],
+      createdAt: serverTimestamp(),
+    })
+
+    const storageRef = ref(storage, `posts/${userId}/${docRef.id}`);
+    await uploadBytes(storageRef, file);
+
+    const photoURL = await getDownloadURL(storageRef);
+
+    await updateDoc(doc(db, "posts", docRef.id), {
+      photo: photoURL,
+    });
+
+    return docRef.id;
+  } catch (error) {
+    console.error("게시글 작성 실패:", error);
+    throw new Error("게시글 작성에 실패했습니다.");
+  }
+};
 
 export const getPosts = async (
     lastDoc?: DocumentSnapshot | null,

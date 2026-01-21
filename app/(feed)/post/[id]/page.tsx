@@ -85,16 +85,7 @@ export default function PostPage() {
   if (!post) return null;
 
   return (
-      <div className="flex flex-col overflow-hidden relative h-screen justify-start">
-        <button
-            onClick={() => router.push('/feed')}
-            className="absolute left-[20px] top-[50px] z-10"
-        >
-          <Image src="/Return.png" alt="뒤로가기" width={40} height={40} />
-        </button>
-
-        <div className="w-full h-[100px] bg-white shadow-[0px_2px_5px_rgba(0,0,0,0.1)]" />
-
+      <div>
         <div className="flex flex-row gap-[9px] pl-[20px] pt-[18px] pb-[18px] items-center">
           {post.member.profilePhoto ? (
               <Image

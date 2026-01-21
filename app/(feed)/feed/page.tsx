@@ -9,11 +9,13 @@ import TempFilter from '../../../components/filter/TempFilter';
 import { Gender, PostSummary, TempRange } from '../../../types';
 import { getPosts } from '../../../lib/services/postService';
 import Image from 'next/image';
+import {useAuthStore} from "../../../store/useAuthStore";
 
 export default function FeedPage() {
   const router = useRouter();
   const feedScrollRef = useRef<HTMLDivElement | null>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   const [order, setOrder] = useState<'latest' | 'popular'>('latest');
   const [openOrder, setOpenOrder] = useState(false);
@@ -128,20 +130,17 @@ export default function FeedPage() {
   if (error) return <div className="flex items-center justify-center h-screen">{error}</div>;
 
   return (
-      <div className="flex flex-col overflow-hidden relative h-screen justify-start">
-        <button onClick={() => router.push('/')} className="absolute left-[20px] top-[50px] z-10">
-          <Image src="/Return.png" alt="뒤로가기" width={40} height={40} />
-        </button>
-
-        <button
-            className="absolute w-[80px] h-[80px] right-[13px] bottom-[55px] rounded-full
-                   bg-primary shadow-[2px_2px_4px_rgba(0,0,0,0.25)] flex items-center justify-center z-10"
-            onClick={() => router.push('/write')}
-        >
-          <Image src="/Add.png" alt="글쓰기" width={50} height={50} />
-        </button>
-
-        <div className="w-full h-[100px] bg-white shadow-[0px_2px_5px_rgba(0,0,0,0.1)]" />
+      <div className="flex flex-col flex-1 overflow-hidden relative justify-start">
+        {isLoggedIn && (
+            <button
+                className="absolute w-[70px] h-[70px] right-[13px] bottom-[55px] rounded-full
+                            bg-primary shadow-[2px_2px_4px_rgba(0,0,0,0.25)] flex items-center justify-center z-10
+                            hover:scale-95 transition-all duration-100 ease-in-out"
+                onClick={() => router.push('/write')}
+            >
+              <Image src="/Add.png" alt="글쓰기" width={40} height={40}/>
+            </button>
+        )}
 
         <div ref={feedScrollRef} className="flex-1 overflow-y-auto no-scrollbar">
           <div className="ml-[28px] flex flex-row gap-x-[17px] mt-[17px]">
