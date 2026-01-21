@@ -49,23 +49,8 @@ export default function FinishUI({
         });
       }
 
-      // 백엔드에 추가 정보 저장 (선택사항)
-      const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      try {
-        await fetch(`${API}/api/members/profile`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            nickname,
-          }),
-        });
-      } catch (err) {
-        console.warn("프로필 정보 저장 실패 (Firebase는 성공):", err);
-      }
-
-      // 성공 → 메인 화면으로
-      router.push("/");
+      // 성공 → 로그인 화면으로
+      router.push("/login");
     } catch (err: any) {
       console.error("회원가입 실패:", err);
 
