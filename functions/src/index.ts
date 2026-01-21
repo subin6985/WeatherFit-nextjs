@@ -33,6 +33,19 @@ export const sendVerificationCode = onCall(
     }
 
     try {
+      // 이메일 중복 체크
+      try {
+        await admin.auth().getUserByEmail(email);
+        throw new HttpsError(
+          "already-exists",
+          "이미 가입된 이메일입니다."
+        );
+      } catch (error: any) {
+        if (error.code !== "auth/user-not-found") {
+          throw error;
+        }
+      }
+
       // Resend 초기화
       const resend = new Resend(resendApiKey.value());
 
@@ -74,6 +87,10 @@ export const sendVerificationCode = onCall(
 
       return {success: true, message: "인증 코드가 전송되었습니다."};
     } catch (error) {
+      if (error instanceof HttpsError) {
+        throw error;
+      }
+
       console.error("이메일 전송 실패:", error);
       throw new HttpsError("internal", "이메일 전송에 실패했습니다.");
     }

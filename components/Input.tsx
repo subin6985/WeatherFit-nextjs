@@ -32,7 +32,7 @@ export default function Input({
             placeholder={placeholder}
             onChange={(e) => onChange(e.target.value)}
             className={`${disabled ? "bg-snow" : "bg-white"}
-          border-[2px] pl-[18px] text-[18px]
+          border-[2px] pl-[18px] text-[16px]
           focus:border-primary focus:outline-none
           rounded-full w-full h-[43px]
           ${error ? "border-warning" : "border-light"}`}

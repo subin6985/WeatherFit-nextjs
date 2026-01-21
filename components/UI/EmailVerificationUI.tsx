@@ -73,7 +73,11 @@ export default function EmailVerificationUI({
     } catch (err) {
       console.error("이메일 전송 실패:", err);
       setEmailError(true);
-      alert(err.message || '이메일 전송에 실패했습니다.');
+
+      if (err.code === "functions/already-exists") {
+        alert("이미 가입된 이메일입니다.");
+      }
+      else alert(err.message || '이메일 전송에 실패했습니다.');
     } finally {
       setLoading(false);
     }
