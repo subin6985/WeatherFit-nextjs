@@ -3,10 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
-import { getFunctions, httpsCallable } from "firebase/functions";
+import { httpsCallable } from "firebase/functions";
 import Input from "../Input";
 import SmallButton from "../SmallButton";
 import Button from "../Button";
+import {functions} from "../../lib/firebase";
 
 interface EmailVerificationUIProps {
   email: string;
@@ -20,7 +21,6 @@ export default function EmailVerificationUI({
                                               onComplete,
                                             }: EmailVerificationUIProps) {
   const router = useRouter();
-  const functions = getFunctions();
 
   const [emailError, setEmailError] = useState(false);
   const [sent, setSent] = useState(false);
