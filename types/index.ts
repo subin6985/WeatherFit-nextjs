@@ -3,6 +3,8 @@ export interface BasePost {
   createdAt: string;
   photo: string;
   tempRange: string;
+  region: string;
+  outfitDate: string;
   likes: number;
 }
 

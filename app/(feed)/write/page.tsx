@@ -1,16 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import StepOneUI from "../../../components/WriteUI/StepOneUI";
 import StepTwoUI from "../../../components/WriteUI/StepTwoUI";
+import {useWriteStore} from "../../../store/useWriteStore";
 
 export default function WritePage() {
-  const [step, setStep] = useState(1);
+  const { step, setStep, resetStep } = useWriteStore();
 
-  const [file, setFile] = useState<File>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [outfitRegion, setOutfitRegion] = useState("");
-  const [outfitDate, setOutfitDate] = useState<Date>(null);
+  const [outfitDate, setOutfitDate] = useState<Date | null>(null);
   const [content, setContent] = useState("");
+
+  useEffect(() => {
+    resetStep();
+  }, []);
 
   return (
       <>

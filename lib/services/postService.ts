@@ -37,7 +37,7 @@ export const createPost = async (data: CreatePostData): Promise<string> => {
 
     const postsRef = collection(db, "posts");
     const docRef = await addDoc(postsRef, {
-      userId: userId,
+      memberId: userId,
       post: content,
       photo: "",
       tempRange,
@@ -102,10 +102,19 @@ export const getPosts = async (
     q = query(q, limit(pageSize));
 
     const snapshot = await getDocs(q);
-    const posts: PostSummary[] = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    } as PostSummary));
+    const posts: PostSummary[] = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        createdAt: data.createdAt,
+        photo: data.photo,
+        tempRange: data.tempRange,
+        region: data.region,
+        outfitDate: data.outfitDate,
+        likes: data.likes || 0,
+        gender: data.gender,
+      } as PostSummary;
+    });
 
     return {
       posts,
@@ -139,6 +148,8 @@ export const getPostById = async (postId: string, userId?: string) => {
       photo: postData.photo,
       post: postData.post,
       tempRange: postData.tempRange,
+      region: postData.region,
+      outfitDate: postData.outfitDate,
       likes: postData.likes || 0,
       member: {
         memberId: memberDoc.id,
