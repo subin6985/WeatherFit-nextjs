@@ -4,16 +4,19 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Ratio from "./Ratio";
 import {useAuthStore} from "../store/useAuthStore";
+import {auth} from "../lib/firebase";
 
 type WeatherBackground = "bg-sunny" | "bg-cloudy" | "bg-snowy" | "bg-rainy";
 
 export default function WeatherClient() {
   const router = useRouter();
+
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+
   const [bg, setBg] = useState<WeatherBackground>("bg-sunny");
   const [currTemp, setCurrTemp] = useState(25);
   const [avgTemp, setAvgTemp] = useState(25);
   const [avgWeather, setAvgWeather] = useState("맑음");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // 날씨를 배경으로 매핑
   const mapWeatherToBackground = (main: string): WeatherBackground => {
@@ -76,10 +79,6 @@ export default function WeatherClient() {
           setBg("bg-cloudy");
         }
     );
-
-    // 로그인 상태 확인
-    const isLoggedIn = useAuthStore.getState().isLoggedIn;
-    setIsLoggedIn(isLoggedIn);
   }, []);
 
   const handleFeedButton = () => {
@@ -90,6 +89,11 @@ export default function WeatherClient() {
     if (isLoggedIn) router.push("/mypage");
     else router.push("/login");
   };
+
+  const handleLogoutButton = async () => {
+    await auth.signOut();
+    useAuthStore.getState().logout();
+  }
 
   return (
       <div className="relative h-screen items-center">
@@ -116,8 +120,13 @@ export default function WeatherClient() {
               <img src="/Feed.png" alt="Feed" className="w-[40px] h-[40px] mb-[13px]" />
             </button>
             <button onClick={handleLoginButton}>
-              <img src="/User.png" alt="User" className="w-[40px] h-[40px]" />
+              <img src="/User.png" alt="User" className="w-[40px] h-[40px] mb-[13px]" />
             </button>
+            {isLoggedIn && (
+                <button onClick={handleLogoutButton}>
+                  <img src="/Logout.svg" alt="Logout" className="w-[40px] h-[40px]" />
+                </button>
+            )}
           </div>
         </div>
 
