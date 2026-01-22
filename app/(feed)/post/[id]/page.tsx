@@ -6,15 +6,20 @@ import { useParams } from 'next/navigation';
 import { PostDetail } from '../../../../types';
 import { getPostById, toggleLike } from '../../../../lib/services/postService';
 import { useAuth } from '../../../../hooks/useAuth';
+import {useNavigationStore} from "../../../../store/useNavigationStore";
 
 export default function PostPage() {
   const { id } = useParams();
-  const router = useRouter();
+  const { setCurrentPage } = useNavigationStore();
   const { user } = useAuth();
 
   const [post, setPost] = useState<PostDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCurrentPage('post');
+  }, []);
 
   useEffect(() => {
     if (!id || typeof id !== 'string') return;
@@ -39,6 +44,11 @@ export default function PostPage() {
   const handleToggleLike = async () => {
     if (!post || !user) {
       alert('로그인이 필요합니다.');
+      return;
+    }
+
+    if (user.uid === post.member.memberId) {
+      alert('본인 글에는 좋아요 할 수 없습니다.');
       return;
     }
 

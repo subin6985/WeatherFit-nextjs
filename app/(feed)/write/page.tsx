@@ -4,9 +4,11 @@ import {useEffect, useState} from "react";
 import StepOneUI from "../../../components/WriteUI/StepOneUI";
 import StepTwoUI from "../../../components/WriteUI/StepTwoUI";
 import {useWriteStore} from "../../../store/useWriteStore";
+import {useNavigationStore} from "../../../store/useNavigationStore";
 
 export default function WritePage() {
   const { step, setStep, resetStep } = useWriteStore();
+  const { setCurrentPage } = useNavigationStore();
 
   const [file, setFile] = useState<File | null>(null);
   const [outfitRegion, setOutfitRegion] = useState("");
@@ -15,6 +17,7 @@ export default function WritePage() {
 
   useEffect(() => {
     resetStep();
+    setCurrentPage('write');
   }, []);
 
   return (

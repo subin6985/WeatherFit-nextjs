@@ -9,12 +9,15 @@ import TempFilter from '../../../components/filter/TempFilter';
 import { Gender, PostSummary, TempRange } from '../../../types';
 import { getPosts } from '../../../lib/services/postService';
 import {useAuthStore} from "../../../store/useAuthStore";
+import {useNavigationStore} from "../../../store/useNavigationStore";
 
 export default function FeedPage() {
   const router = useRouter();
   const feedScrollRef = useRef<HTMLDivElement | null>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+
+  const { setCurrentPage } = useNavigationStore();
 
   const [order, setOrder] = useState<'latest' | 'popular'>('latest');
   const [openOrder, setOpenOrder] = useState(false);
@@ -28,6 +31,10 @@ export default function FeedPage() {
   const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+
+  useEffect(() => {
+    setCurrentPage('feed');
+  }, []);
 
   // 초기 데이터 로드
   useEffect(() => {
