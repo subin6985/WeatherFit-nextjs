@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 
 interface InputProps {
   type?: "text" | "password";
@@ -45,7 +44,7 @@ export default function Input({
                 className="absolute right-4 top-1/2 -translate-y-1/2"
             >
               {showPw ? (
-                  <Image
+                  <img
                       src="/EyeOff.png"
                       alt="Hide password"
                       width={27}
@@ -53,7 +52,7 @@ export default function Input({
                       className="w-[27px] h-[27px]"
                   />
               ) : (
-                  <Image
+                  <img
                       src="/Eye.png"
                       alt="Show password"
                       width={27}

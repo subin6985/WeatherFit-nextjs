@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useAuthStore } from "../../../store/useAuthStore"
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
@@ -62,7 +61,7 @@ export default function LoginPage() {
             onClick={returnToMain}
             className="absolute left-[20px] top-[50px]"
         >
-          <Image
+          <img
               src="/Return.png"
               alt="Return"
               width={40}
@@ -72,7 +71,7 @@ export default function LoginPage() {
         </button>
 
         <button onClick={returnToMain}>
-          <Image
+          <img
               src="/WeatherFit.png"
               alt="WeatherFit Logo"
               width={227}
@@ -111,7 +110,7 @@ export default function LoginPage() {
 
         <div className="mt-[17px] flex flex-row justify-center gap-[25px]">
           <button onClick={handleGoogleLogin} disabled={isLoading}>
-            <Image
+            <img
                 src="/Google.png"
                 alt="Google Login"
                 width={35}
@@ -121,7 +120,7 @@ export default function LoginPage() {
           </button>
           {/* 카카오 로그인은 추후 구현 */}
           <button disabled>
-            <Image
+            <img
                 src="/Kakao.png"
                 alt="Kakao Login"
                 width={35}

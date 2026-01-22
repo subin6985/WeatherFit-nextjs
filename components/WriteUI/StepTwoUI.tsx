@@ -2,12 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { REGIONS, getRegionCoords, TempRange } from "../../types";
 import { fetchWeatherForDate, tempRangeToString } from "../../lib/weatherUtils";
 import { createPost } from "../../lib/services/postService";
 import { useAuth } from "../../hooks/useAuth";
 import SmallButton from "../SmallButton";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 
 interface StepTwoUIProps {
   file: File | null;
@@ -116,16 +117,22 @@ export default function StepTwoUI({
     try {
       setSubmitting(true);
 
-      // 사용자 gender 정보 가져오기 (Firestore users 컬렉션에서)
-      const userDoc = await import("firebase/firestore").then((mod) =>
-          mod.getDoc(mod.doc(import("../../lib/firebase").then((m) => m.db), "users", user.uid))
-      );
-
-      const gender = userDoc.exists() ? userDoc.data()?.gender || "NO_SELECT" : "NO_SELECT";
+      // 사용자 gender 정보 가져오기
+      let gender = "NO_SELECT";
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          gender = userDoc.data()?.gender || "NO_SELECT";
+        }
+      } catch (err) {
+        console.error("사용자 정보 가져오기 실패:", err);
+      }
 
       await createPost({
         file,
         content,
+        temp: weatherInfo.temp,
         tempRange: weatherInfo.tempRange,
         region: outfitRegion,
         outfitDate,
@@ -163,7 +170,7 @@ export default function StepTwoUI({
               <span className={outfitRegion ? "text-base" : "text-middle"}>
                 {outfitRegion || "지역 선택"}
               </span>
-                <Image src="/Down.png" alt="드롭다운" width={16} height={16} />
+                <img src="/Down.png" alt="드롭다운" width={16} height={16} />
               </button>
 
               {openRegionDropdown && (
@@ -215,7 +222,7 @@ export default function StepTwoUI({
           {weatherInfo && !loadingWeather && (
               <div className="mb-[20px] p-[16px] bg-snow rounded-lg">
                 <p className="text-[14px] text-base">
-                  예상 기온: <span className="font-bold">{weatherInfo.temp}℃</span>
+                  평균 기온: <span className="font-bold">{weatherInfo.temp}℃</span>
                 </p>
                 <p className="text-[14px] text-middle mt-[4px]">
                   ({tempRangeToString(weatherInfo.tempRange)})

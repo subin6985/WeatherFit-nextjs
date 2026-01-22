@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { PostSummary } from '../types';
 
 interface FeedCardProps {
@@ -18,7 +17,7 @@ export default function FeedCard({ feed }: FeedCardProps) {
   return (
       <button className="w-[127px] overflow-hidden" onClick={handleClick}>
         {feed.photo ? (
-            <Image
+            <img
                 src={feed.photo}
                 alt="피드 이미지"
                 width={127}

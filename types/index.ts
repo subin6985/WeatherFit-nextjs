@@ -2,6 +2,7 @@ export interface BasePost {
   id: string;
   createdAt: string;
   photo: string;
+  temp: number;
   tempRange: string;
   region: string;
   outfitDate: string;

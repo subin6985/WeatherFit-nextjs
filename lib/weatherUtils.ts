@@ -13,63 +13,6 @@ export const tempToTempRange = (temp: number): TempRange => {
   return TempRange.OVER_28;
 };
 
-// 특정 날짜와 위치의 날씨 정보 가져오기
-export const fetchWeatherForDate = async (
-    lat: number,
-    lon: number,
-    date: Date
-): Promise<{ temp: number; tempRange: TempRange } | null> => {
-  const API_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
-
-  if (!API_KEY) {
-    console.error("Weather API key not found");
-    return null;
-  }
-
-  try {
-    const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
-    const res = await fetch(url);
-
-    if (!res.ok) throw new Error("Weather API error");
-
-    const data = await res.json();
-
-    // 오늘 날짜와 선택한 날짜 비교
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const selectedDate = new Date(date);
-    selectedDate.setHours(0, 0, 0, 0);
-
-    const daysDiff = Math.floor(
-        (selectedDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    let temp: number;
-
-    if (daysDiff === 0) {
-      // 오늘: 현재 온도 사용
-      temp = Math.round(data.current.temp);
-    } else if (daysDiff > 0 && daysDiff <= 7) {
-      // 1~7일 후: 예보 데이터 사용
-      temp = Math.round(data.daily[daysDiff].temp.day);
-    } else if (daysDiff < 0 && daysDiff >= -5) {
-      // 과거 5일 이내: hourly 데이터에서 추정 (제한적)
-      // OpenWeather API는 과거 데이터를 제공하지 않으므로 현재 온도로 대체
-      temp = Math.round(data.current.temp);
-    } else {
-      // 범위 밖: 현재 온도 사용
-      temp = Math.round(data.current.temp);
-    }
-
-    const tempRange = tempToTempRange(temp);
-
-    return { temp, tempRange };
-  } catch (error) {
-    console.error("날씨 정보를 가져오는데 실패했습니다:", error);
-    return null;
-  }
-};
-
 // TempRange를 표시용 문자열로 변환
 export const tempRangeToString = (range: TempRange): string => {
   const map: Record<TempRange, string> = {
@@ -83,4 +26,61 @@ export const tempRangeToString = (range: TempRange): string => {
     [TempRange.OVER_28]: "28도 이상",
   };
   return map[range];
+};
+
+// Open-Meteo로 특정 날짜와 위치의 날씨 정보 가져오기
+export const fetchWeatherForDate = async (
+    lat: number,
+    lon: number,
+    date: Date
+): Promise<{ temp: number; tempRange: TempRange } | null> => {
+  try {
+    const now = new Date();
+    const twoDaysAgo = new Date(now);
+    twoDaysAgo.setDate(now.getDate() - 2);
+
+    const dateStr = date.toISOString().split('T')[0];
+    let url: string;
+
+    if (date < twoDaysAgo) {
+      // 과거 데이터: Archive API
+      url = `https://archive-api.open-meteo.com/v1/archive` +
+          `?latitude=${lat}&longitude=${lon}` +
+          `&start_date=${dateStr}&end_date=${dateStr}` +
+          `&daily=temperature_2m_mean` +
+          `&timezone=Asia/Seoul`;
+    } else {
+      // 현재/미래: Forecast API
+      url = `https://api.open-meteo.com/v1/forecast` +
+          `?latitude=${lat}&longitude=${lon}` +
+          `&daily=temperature_2m_mean` +
+          `&past_days=2` +
+          `&forecast_days=7` +
+          `&timezone=Asia/Seoul`;
+    }
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Weather API error");
+
+    const data = await response.json();
+
+    let temp: number;
+
+    if (date < twoDaysAgo) {
+      temp = Math.round(data.daily.temperature_2m_mean[0]);
+    } else {
+      const index = data.daily.time.indexOf(dateStr);
+      if (index === -1) {
+        throw new Error("Date not found in forecast");
+      }
+      temp = Math.round(data.daily.temperature_2m_mean[index]);
+    }
+
+    const tempRange = tempToTempRange(temp);
+
+    return { temp, tempRange };
+  } catch (error) {
+    console.error("날씨 정보를 가져오는데 실패했습니다:", error);
+    return null;
+  }
 };

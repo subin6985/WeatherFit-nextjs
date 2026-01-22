@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Image from "next/image";
 import { httpsCallable } from "firebase/functions";
 import Input from "../Input";
 import SmallButton from "../SmallButton";
@@ -116,7 +115,7 @@ export default function EmailVerificationUI({
   return (
       <div className="flex flex-col relative h-screen justify-center items-center">
         <button onClick={returnToLogin} className="absolute left-[20px] top-[50px]">
-          <Image
+          <img
               src="/Return.png"
               alt="Return"
               width={40}
@@ -126,7 +125,7 @@ export default function EmailVerificationUI({
         </button>
 
         <button onClick={returnToLogin}>
-          <Image
+          <img
               src="/WeatherFit.png"
               alt="WeatherFit Logo"
               width={227}

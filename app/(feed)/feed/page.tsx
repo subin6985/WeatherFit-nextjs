@@ -8,7 +8,6 @@ import GenderFilter from '../../../components/filter/GenderFilter';
 import TempFilter from '../../../components/filter/TempFilter';
 import { Gender, PostSummary, TempRange } from '../../../types';
 import { getPosts } from '../../../lib/services/postService';
-import Image from 'next/image';
 import {useAuthStore} from "../../../store/useAuthStore";
 
 export default function FeedPage() {
@@ -57,7 +56,7 @@ export default function FeedPage() {
   };
 
   const fetchNextPage = async () => {
-    if (!hasMore || loadingMore) return;
+    if (!hasMore || loadingMore || !lastDoc) return;
 
     try {
       setLoadingMore(true);
@@ -68,7 +67,11 @@ export default function FeedPage() {
         order,
       });
 
-      setFeeds(prev => [...prev, ...result.posts]);
+      setFeeds(prev => {
+        const existingIds = new Set(prev.map(p => p.id));
+        const newPosts = result.posts.filter(post => !existingIds.has(post.id));
+        return [...prev, newPosts];
+      });
       setLastDoc(result.lastDoc);
       setHasMore(result.hasMore);
     } catch (e) {
@@ -138,7 +141,7 @@ export default function FeedPage() {
                             hover:scale-95 transition-all duration-100 ease-in-out"
                 onClick={() => router.push('/write')}
             >
-              <Image src="/Add.png" alt="글쓰기" width={40} height={40}/>
+              <img src="/Add.png" alt="글쓰기" width={40} height={40}/>
             </button>
         )}
 

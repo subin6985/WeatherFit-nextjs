@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import Image from 'next/image';
 import { PostDetail } from '../../../../types';
 import { getPostById, toggleLike } from '../../../../lib/services/postService';
 import { useAuth } from '../../../../hooks/useAuth';
@@ -88,7 +87,7 @@ export default function PostPage() {
       <div>
         <div className="flex flex-row gap-[9px] pl-[20px] pt-[18px] pb-[18px] items-center">
           {post.member.profilePhoto ? (
-              <Image
+              <img
                   src={post.member.profilePhoto}
                   alt={post.member.nickname}
                   width={52}
@@ -101,19 +100,17 @@ export default function PostPage() {
           <div className="flex flex-col gap-[2px]">
             <div className="text-[16px] text-base">{post.member.nickname}</div>
             <div className="text-[16px] text-middle">
-              {formatDate(post.createdAt)} · {post.tempRange.slice(0, -1)}℃
+              {formatDate(post.createdAt)} · {post.temp}℃
             </div>
           </div>
         </div>
 
         <div>
           {post.photo ? (
-              <Image
+              <img
                   src={post.photo}
                   alt="포스트 이미지"
-                  width={393}
-                  height={491}
-                  className="w-full aspect-[4/5] object-cover"
+                  className="w-full h-[393px] object-cover"
               />
           ) : (
               <div className="w-full h-[393px] bg-light" />
@@ -125,7 +122,7 @@ export default function PostPage() {
               onClick={handleToggleLike}
               className="flex items-center gap-[5px] text-base text-[14px]"
           >
-            <Image
+            <img
                 src={post.isLikedByMe ? '/Heart-full.png' : '/Heart.png'}
                 alt="좋아요"
                 width={30}

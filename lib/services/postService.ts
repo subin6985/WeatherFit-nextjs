@@ -17,13 +17,14 @@ import {
   DocumentSnapshot,
   serverTimestamp
 } from 'firebase/firestore';
-import { db, storage } from '../firebase';
+import {auth, db, storage} from '../firebase';
 import { PostDetail, PostSummary, TempRange, Gender } from '../../types';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export interface CreatePostData {
   file: File;
   content: string;
+  temp: number;
   tempRange: TempRange;
   region: string;
   outfitDate: Date;
@@ -33,20 +34,21 @@ export interface CreatePostData {
 
 export const createPost = async (data: CreatePostData): Promise<string> => {
   try {
-    const { file, content, tempRange, region, outfitDate, userId, gender } = data;
+    const { file, content, temp, tempRange, region, outfitDate, userId, gender } = data;
 
     const postsRef = collection(db, "posts");
     const docRef = await addDoc(postsRef, {
       memberId: userId,
       post: content,
       photo: "",
+      temp,
       tempRange,
       region,
       outfitDate: outfitDate.toISOString(),
       gender,
       likes: 0,
       likedBy: [],
-      createdAt: serverTimestamp(),
+      createdAt: Date.now(),
     })
 
     const storageRef = ref(storage, `posts/${userId}/${docRef.id}`);
@@ -108,6 +110,7 @@ export const getPosts = async (
         id: doc.id,
         createdAt: data.createdAt,
         photo: data.photo,
+        temp: data.temp,
         tempRange: data.tempRange,
         region: data.region,
         outfitDate: data.outfitDate,
@@ -147,6 +150,7 @@ export const getPostById = async (postId: string, userId?: string) => {
       createdAt: postData.createdAt,
       photo: postData.photo,
       post: postData.post,
+      temp: postData.temp,
       tempRange: postData.tempRange,
       region: postData.region,
       outfitDate: postData.outfitDate,

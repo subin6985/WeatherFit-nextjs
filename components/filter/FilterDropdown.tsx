@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, ReactNode } from 'react';
-import Image from 'next/image';
 
 interface FilterDropdownProps {
   label: string;
@@ -19,7 +18,7 @@ export default function FilterDropdown({ label, children }: FilterDropdownProps)
             onClick={() => setIsOpen(prev => !prev)}
         >
           {label}
-          <Image
+          <img
               src="/Down.png"
               alt="드롭다운"
               width={19}

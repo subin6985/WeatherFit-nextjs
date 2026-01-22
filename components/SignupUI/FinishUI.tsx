@@ -2,11 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Image from "next/image";
 import { updateProfile } from "firebase/auth";
 import { useAuthStore } from "../../store/useAuthStore";
 import Input from "../Input";
 import Button from "../Button";
+import {db} from "../../lib/firebase";
+import {doc, setDoc} from "firebase/firestore";
 
 interface FinishUIProps {
   email: string;
@@ -49,6 +50,14 @@ export default function FinishUI({
         });
       }
 
+      // Firestore users 컬렉션에도 저장
+      await setDoc(doc(db, 'users', user.uid), {
+        nicknmae: nickname,
+        email: user.email,
+        profilePhoto: '',
+        createdAt: Date.now()
+      });
+
       // 성공 → 로그인 화면으로
       router.push("/login");
     } catch (err: any) {
@@ -70,7 +79,7 @@ export default function FinishUI({
   return (
       <div className="flex flex-col relative h-screen justify-center items-center">
         <button onClick={returnToLogin} className="absolute left-[20px] top-[50px]">
-          <Image
+          <img
               src="/Return.png"
               alt="Return"
               width={40}
@@ -80,7 +89,7 @@ export default function FinishUI({
         </button>
 
         <button onClick={returnToLogin}>
-          <Image
+          <img
               src="/WeatherFit.png"
               alt="WeatherFit Logo"
               width={227}
