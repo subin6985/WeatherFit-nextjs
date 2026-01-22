@@ -62,27 +62,7 @@ export default function SetPasswordUI({
   }, [passwordError, confirmPwError, password, confirmPw]);
 
   return (
-      <div className="flex flex-col relative h-screen justify-center items-center">
-        <button onClick={returnToLogin} className="absolute left-[20px] top-[50px]">
-          <img
-              src="/Return.png"
-              alt="Return"
-              width={40}
-              height={40}
-              className="w-[40px] h-auto"
-          />
-        </button>
-
-        <button onClick={returnToLogin}>
-          <img
-              src="/WeatherFit.png"
-              alt="WeatherFit Logo"
-              width={227}
-              height={100}
-              className="w-[227px] h-auto mb-[56px]"
-          />
-        </button>
-
+      <div className="flex flex-col relative w-full justify-center items-center">
         <div className="mb-[17px]">
           <div className="text-base text-[16px] mb-[5px] ml-[18px]">비밀번호</div>
           <Input

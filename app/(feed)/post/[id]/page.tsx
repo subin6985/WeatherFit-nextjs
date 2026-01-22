@@ -127,10 +127,10 @@ export default function PostPage() {
           )}
         </div>
 
-        <div className="pt-[10px] pl-[20px] pr-[20px]">
+        <div className="pt-[10px] pl-[10px]">
           <button
               onClick={handleToggleLike}
-              className="flex items-center gap-[5px] text-base text-[14px]"
+              className="flex items-center gap-[10px] text-base text-[14px]"
           >
             <img
                 src={post.isLikedByMe ? '/Heart-full.png' : '/Heart.png'}

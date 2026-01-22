@@ -157,7 +157,7 @@ export const getPostById = async (postId: string, userId?: string) => {
       likes: postData.likes || 0,
       member: {
         memberId: memberDoc.id,
-        nickname: memberDoc.data()?.nickname || '익명',
+        nickname: memberDoc.data()?.nickname || '탈퇴한 회원',
         profilePhoto: memberDoc.data()?.profilePhoto || '',
       },
       isLikedByMe,

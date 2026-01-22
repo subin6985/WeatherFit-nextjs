@@ -30,10 +30,6 @@ export default function EmailVerificationUI({
 
   const [loading, setLoading] = useState(false);
 
-  const returnToLogin = () => {
-    router.push("/login");
-  };
-
   // 이메일 형식 검증
   const isValidEmail = (email: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -113,27 +109,7 @@ export default function EmailVerificationUI({
   };
 
   return (
-      <div className="flex flex-col relative h-screen justify-center items-center">
-        <button onClick={returnToLogin} className="absolute left-[20px] top-[50px]">
-          <img
-              src="/Return.png"
-              alt="Return"
-              width={40}
-              height={40}
-              className="w-[40px] h-auto"
-          />
-        </button>
-
-        <button onClick={returnToLogin}>
-          <img
-              src="/WeatherFit.png"
-              alt="WeatherFit Logo"
-              width={227}
-              height={100}
-              className="w-[227px] h-auto mb-[56px]"
-          />
-        </button>
-
+      <div className="flex flex-col relative justify-center items-center">
         <div className="mb-[17px]">
           <div className="text-base text-[16px] mb-[5px] ml-[18px]">
             ID (이메일)
@@ -156,11 +132,11 @@ export default function EmailVerificationUI({
           <div className="flex flex-row justify-between gap-[10px]">
             <Input
                 value={code}
-                disabled={!sent || loading}
+                disabled={!sent || loading || complete}
                 onChange={setCode}
                 error={codeError}
             />
-            <SmallButton disabled={!sent || loading} onClick={verifyCode}>
+            <SmallButton disabled={!sent || loading || complete} onClick={verifyCode}>
               코드 확인
             </SmallButton>
           </div>

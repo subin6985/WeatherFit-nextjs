@@ -36,12 +36,14 @@ export default function Input({
           rounded-full w-full h-[43px]
           ${error ? "border-warning" : "border-light"}`}
             disabled={disabled}
+            maxLength={(type === "nickname") && 15}
         />
         {isPassword && (
             <button
                 type="button"
                 onClick={() => setShowPw((prev) => !prev)}
                 className="absolute right-4 top-1/2 -translate-y-1/2"
+                tabIndex={-1}
             >
               {showPw ? (
                   <img

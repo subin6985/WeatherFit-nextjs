@@ -9,7 +9,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import {auth, db} from "../lib/firebase";
+import {doc, getDoc, setDoc} from "firebase/firestore";
 
 interface AuthState {
   user: User | null;
@@ -103,11 +104,33 @@ export const useAuthStore = create<AuthState>()(
               set({ isLoading: true });
               const provider = new GoogleAuthProvider();
               const userCredential = await signInWithPopup(auth, provider);
+              const user = userCredential.user;
+
+              // Firestore에서 사용자 확인
+              const userDocRef = doc(db, 'users', user.uid);
+              const userDoc = await getDoc(userDocRef);
+
+              let isNewUser = false;
+
+              // 신규 사용자인 경우 Firestore에 저장
+              if (!userDoc.exists()) {
+                isNewUser = true;
+                await setDoc(userDocRef, {
+                  nickname: user.displayName || '익명',
+                  email: user.email,
+                  profilePhoto: user.photoURL || '',
+                  createdAt: Date.now(),
+                  provider: 'google',
+                });
+              }
+
               set({
                 user: userCredential.user,
                 isLoggedIn: true,
                 isLoading: false,
               });
+
+              return { isNewUser };
             } catch (error) {
               set({ isLoading: false });
               console.error("Google 로그인 실패:", error);

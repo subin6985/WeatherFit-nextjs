@@ -28,10 +28,6 @@ export default function FinishUI({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const returnToLogin = () => {
-    router.push("/login");
-  };
-
   const handleSignup = async () => {
     if (!nickname.trim()) return;
 
@@ -52,7 +48,7 @@ export default function FinishUI({
 
       // Firestore users 컬렉션에도 저장
       await setDoc(doc(db, 'users', user.uid), {
-        nicknmae: nickname,
+        nickname: nickname,
         email: user.email,
         profilePhoto: '',
         createdAt: Date.now()
@@ -77,31 +73,11 @@ export default function FinishUI({
   };
 
   return (
-      <div className="flex flex-col relative h-screen justify-center items-center">
-        <button onClick={returnToLogin} className="absolute left-[20px] top-[50px]">
-          <img
-              src="/Return.png"
-              alt="Return"
-              width={40}
-              height={40}
-              className="w-[40px] h-auto"
-          />
-        </button>
-
-        <button onClick={returnToLogin}>
-          <img
-              src="/WeatherFit.png"
-              alt="WeatherFit Logo"
-              width={227}
-              height={100}
-              className="w-[227px] h-auto mb-[56px]"
-          />
-        </button>
-
+      <div className="flex flex-col relative justify-center items-center">
         <div className="mb-[17px]">
           <div className="text-base text-[16px] mb-[5px] ml-[18px]">닉네임</div>
           <div className="flex flex-row justify-between gap-[10px]">
-            <Input value={nickname} onChange={setNickname} />
+            <Input type="nickname" value={nickname} onChange={setNickname} />
           </div>
         </div>
 

@@ -37,11 +37,23 @@ export default function LoginPage() {
     setError(false);
 
     try {
-      await loginWithGoogle();
-      router.push("/");
+      const { isNewUser } = await loginWithGoogle();
+
+      // 신규 사용자면 닉네임 설정 페이지로
+      if (isNewUser) {
+        router.push("/signup/finish-google");
+      } else {
+        router.push("/");
+      }
     } catch (e) {
       console.error("Google 로그인 실패: ", e);
-      setError(true);
+
+      // 같은 이메일로 다른 방식으로 가입할 경우
+      if (e.code === "auth/account-exists-with-different-credential") {
+        alert("이 이메일은 이미 다른 방법으로 가입되어 있습니다. \n일반 로그인으로 로그인해주세요.");
+      } else {
+        setError(true);
+      }
     } finally {
       setIsLoading(false);
     }
