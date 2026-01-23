@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import {useState, ReactNode, useRef, useEffect} from 'react';
 
 interface FilterDropdownProps {
   label: string;
@@ -10,8 +10,24 @@ interface FilterDropdownProps {
 export default function FilterDropdown({ label, children }: FilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [isOpen]);
+
   return (
-      <div className="relative w-fit">
+      <div className="relative w-fit" ref={filterRef}>
         <button
             className="text-[12px] text-middle w-[100px] h-[27px] bg-white border-light border-[1px] rounded-full
                    justify-center items-center relative"

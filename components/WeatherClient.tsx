@@ -91,6 +91,12 @@ export default function WeatherClient() {
   };
 
   const handleLogoutButton = async () => {
+    if (!isLoggedIn) return;
+
+    const ok = confirm("로그아웃 하시겠습니까?");
+
+    if (!ok) return;
+
     await auth.signOut();
     useAuthStore.getState().logout();
     alert("로그아웃 되었습니다.");

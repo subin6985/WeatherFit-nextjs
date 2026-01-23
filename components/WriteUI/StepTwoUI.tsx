@@ -72,7 +72,6 @@ export default function StepTwoUI({
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedDate = new Date(e.target.value);
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
 
     if (selectedDate > today) {
       alert("오늘 이후 날짜는 선택할 수 없습니다.");

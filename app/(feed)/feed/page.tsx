@@ -32,6 +32,8 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
+  const ref = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setCurrentPage('feed');
   }, []);
@@ -40,6 +42,20 @@ export default function FeedPage() {
   useEffect(() => {
     fetchInitialPosts();
   }, [order, tempRanges, genders]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setOpenOrder(false);
+      }
+    };
+
+    if (openOrder) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openOrder]);
 
   const fetchInitialPosts = async () => {
     try {
@@ -158,7 +174,8 @@ export default function FeedPage() {
             <TempFilter value={tempRanges} onChange={handleTempRangeSelect} />
           </div>
 
-          <div className="relative w-fit mt-[22px] ml-[28px] mb-[5px] text-[12px]">
+          <div className="relative w-fit mt-[22px] ml-[28px] mb-[5px] text-[12px]"
+               ref={ref}>
             <button onClick={() => setOpenOrder(prev => !prev)}>
               {order === 'latest' ? '최신순▼' : '인기순▼'}
             </button>

@@ -15,11 +15,11 @@ import {
   limit,
   startAfter,
   DocumentSnapshot,
-  serverTimestamp
+  serverTimestamp, deleteDoc
 } from 'firebase/firestore';
 import {auth, db, storage} from '../firebase';
 import { PostDetail, PostSummary, TempRange, Gender } from '../../types';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import {ref, uploadBytes, getDownloadURL, deleteObject} from 'firebase/storage';
 
 export interface CreatePostData {
   file: File;
@@ -204,3 +204,16 @@ export const toggleLike = async (postId: string, userId: string) => {
     throw new Error('좋아요 처리에 실패했습니다.');
   }
 };
+
+export const deletePost = async (postId: string, userId: string) => {
+  try {
+    await deleteDoc(doc(db, "posts", postId));
+
+    const photoRef = ref(storage, `posts/${userId}/${postId}`);
+    await deleteObject(photoRef);
+
+    return true;
+  } catch(e) {
+    console.log(e);
+  }
+}

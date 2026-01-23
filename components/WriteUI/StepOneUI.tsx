@@ -73,6 +73,6 @@ export default function StepOneUI({file, setFile, onComplete}: StepOneUIProps) {
         <div className="flex mt-[17px] mr-[20px] justify-end">
           <SmallButton onClick={handleNext} disabled={disable}>선택 완료</SmallButton>
         </div>
-        </div>
+      </div>
   );
 }

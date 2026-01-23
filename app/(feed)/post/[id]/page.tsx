@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { useParams } from 'next/navigation';
 import { PostDetail } from '../../../../types';
-import { getPostById, toggleLike } from '../../../../lib/services/postService';
+import {deletePost, getPostById, toggleLike} from '../../../../lib/services/postService';
 import { useAuth } from '../../../../hooks/useAuth';
 import {useNavigationStore} from "../../../../store/useNavigationStore";
 
@@ -12,10 +12,14 @@ export default function PostPage() {
   const { id } = useParams();
   const { setCurrentPage } = useNavigationStore();
   const { user } = useAuth();
+  const router = useRouter();
 
   const [post, setPost] = useState<PostDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [openMenu, setOpenMenu] = useState(false);
+
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setCurrentPage('post');
@@ -40,6 +44,23 @@ export default function PostPage() {
 
     fetchPost();
   }, [id, user]);
+
+  // 외부 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpenMenu(false);
+      }
+    };
+
+    if (openMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openMenu]);
 
   const handleToggleLike = async () => {
     if (!post || !user) {
@@ -66,6 +87,26 @@ export default function PostPage() {
       alert('좋아요 처리에 실패했습니다.');
     }
   };
+
+  const handleDelete = async () => {
+    const ok = confirm("이 글을 삭제하시겠습니까?");
+
+    if (!ok || user?.uid !== post.member.memberId) {
+      setOpenMenu(false);
+      return;
+    }
+
+    try {
+      const result = await deletePost(id, user?.uid);
+
+      if (result) {
+        router.push("/feed");
+      }
+    } catch (e) {
+      console.error("삭제 실패:", e);
+      alert("게시글 삭제에 실패했습니다.");
+    }
+  }
 
   const formatDate = (isoDate: string) => {
     const date = new Date(isoDate);
@@ -95,24 +136,57 @@ export default function PostPage() {
 
   return (
       <div>
-        <div className="flex flex-row gap-[9px] pl-[20px] pt-[18px] pb-[18px] items-center">
-          {post.member.profilePhoto ? (
-              <img
-                  src={post.member.profilePhoto}
-                  alt={post.member.nickname}
-                  width={52}
-                  height={52}
-                  className="rounded-full object-cover"
-              />
-          ) : (
-              <div className="w-[52px] h-[52px] rounded-full bg-light" />
-          )}
-          <div className="flex flex-col gap-[2px]">
-            <div className="text-[16px] text-base">{post.member.nickname}</div>
-            <div className="text-[16px] text-middle">
-              {formatDate(post.createdAt)} · {post.temp}℃
+        <div className="flex px-[20px] py-[18px] items-center justify-between">
+          <div className="flex flex-row gap-[9px]">
+            {post.member.profilePhoto ? (
+                <img
+                    src={post.member.profilePhoto}
+                    alt={post.member.nickname}
+                    width={52}
+                    height={52}
+                    className="rounded-full object-cover"
+                />
+            ) : (
+                <div className="w-[52px] h-[52px] rounded-full bg-light" />
+            )}
+            <div className="flex flex-col gap-[2px]">
+              <div className="text-[16px] text-base">{post.member.nickname}</div>
+              <div className="text-[16px] text-middle">
+                {formatDate(post.createdAt)} · {post.temp}℃
+              </div>
             </div>
           </div>
+          {
+            (post.member.memberId === user.uid) && (
+                <div className="flex justify-end" ref={menuRef}>
+                  <button onClick={() => setOpenMenu(prev => !prev)}>
+                    <img
+                      src="/Kebab-Menu.png"
+                      alt="menu"
+                      width={36}
+                      height={36}
+                    />
+                  </button>
+                  {openMenu && (
+                      <div className="absolute mt-[40px]
+                            flex flex-col w-[60px] p-[5px] shadow-[2px_2px_4px_rgba(0,0,0,0.25)]
+                            bg-white border-[1px] border-light rounded-[10px]">
+                        <button
+                            className="hover:bg-snow rounded p-[3px]"
+                        >
+                          수정
+                        </button>
+                        <button
+                            className="hover:bg-snow rounded p-[3px] text-warning"
+                            onClick={handleDelete}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                  )}
+                </div>
+              )
+          }
         </div>
 
         <div>

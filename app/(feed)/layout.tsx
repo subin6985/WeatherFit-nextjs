@@ -41,12 +41,12 @@ export default function FeedLayout({children}) {
       <div className="flex flex-col overflow-hidden relative h-screen justify-start">
         <button
             onClick={handleBackClick}
-            className="absolute left-[20px] top-[50px] z-20"
+            className="absolute left-[20px] top-[30px] z-20"
         >
           <img src="/Return.png" alt="뒤로가기" width={40} height={40} />
         </button>
 
-        <div className="w-full h-[100px] bg-white shadow-[0px_2px_5px_rgba(0,0,0,0.1)] shrink-0 z-10" />
+        <div className="w-full h-[80px] bg-white shadow-[0px_2px_5px_rgba(0,0,0,0.1)] shrink-0 z-10" />
 
         {children}
       </div>
