@@ -88,6 +88,10 @@ export default function PostPage() {
     }
   };
 
+  const handleEdit = () => {
+    router.push(`/post/${id}/edit`);
+  }
+
   const handleDelete = async () => {
     const ok = confirm("이 글을 삭제하시겠습니까?");
 
@@ -173,6 +177,7 @@ export default function PostPage() {
                             bg-white border-[1px] border-light rounded-[10px]">
                         <button
                             className="hover:bg-snow rounded p-[3px]"
+                            onClick={handleEdit}
                         >
                           수정
                         </button>

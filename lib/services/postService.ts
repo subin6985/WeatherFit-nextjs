@@ -32,6 +32,14 @@ export interface CreatePostData {
   gender: string;
 }
 
+export interface UpdatePostData {
+  content: string;
+  temp: number;
+  tempRange: TempRange;
+  region: string;
+  outfitDate: Date;
+}
+
 export const createPost = async (data: CreatePostData): Promise<string> => {
   try {
     const { file, content, temp, tempRange, region, outfitDate, userId, gender } = data;
@@ -204,6 +212,22 @@ export const toggleLike = async (postId: string, userId: string) => {
     throw new Error('좋아요 처리에 실패했습니다.');
   }
 };
+
+export const updatePost = async (postId: string, data: UpdatePostData) => {
+  try {
+    const postRef = doc(db, "posts", postId);
+
+    await updateDoc(postRef, {
+      post: data.content,
+      temp: data.temp,
+      tempRange: data.tempRange,
+      region: data.region,
+      outfitDate: data.outfitDate,
+    })
+  } catch (err) {
+    console.log("게시물 수정 실패:", err);
+  }
+}
 
 export const deletePost = async (postId: string, userId: string) => {
   try {
