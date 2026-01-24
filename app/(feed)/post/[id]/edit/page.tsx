@@ -5,14 +5,14 @@ import { useState, useEffect } from "react";
 import { REGIONS, getRegionCoords, TempRange } from "../../../../../types";
 import { fetchWeatherForDate, tempRangeToString } from "../../../../../lib/weatherUtils";
 import { updatePost } from "../../../../../lib/services/postService";
-import { useAuth } from "../../../../../hooks/useAuth";
+import { useAuthStore } from "../../../../../store/useAuthStore";
 import SmallButton from "../../../../../components/SmallButton";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../../../../lib/firebase";
 
 export default function EditPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user } = useAuthStore((state) => state.user);
   const { id } = useParams<String|null>();
 
   const [outfitRegion, setOutfitRegion] = useState<string>("");

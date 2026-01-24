@@ -1,5 +1,6 @@
 import './global.css';
 import {Metadata} from "next";
+import AuthProvider from "../components/AuthProvider";
 
 export const metadata: Metadata = {
   title: {
@@ -18,7 +19,9 @@ export default function RootLayout({
       <html lang="en">
         <body className="w-full h-screen flex justify-center items-center">
           <div className="w-[393px] h-screen mx-auto bg-white">
-            {children}
+            <AuthProvider>
+              {children}
+            </AuthProvider>
           </div>
         </body>
       </html>

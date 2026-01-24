@@ -16,6 +16,7 @@ interface AuthState {
   user: User | null;
   isLoggedIn: boolean;
   isLoading: boolean;
+  lastLoginTime: number | null;
 
   // Actions
   login: (email: string, password: string) => Promise<void>;
@@ -24,22 +25,58 @@ interface AuthState {
   loginWithGoogle: () => Promise<void>;
   setUser: (user: User | null) => void;
   initAuth: () => () => void;
+  checkAuthExpiry: () => void;
 }
+
+// 로그인 유지 기간 30일
+const AUTH_EXPIRY_DAYS = 30;
+const AUTH_EXPIRY_MS = AUTH_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
 
 export const useAuthStore = create<AuthState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
           user: null,
           isLoggedIn: false,
           isLoading: true,
+          lastLoginTime: null,
+
+          // 로그인 만료 체크
+          checkAuthExpiry: () => {
+            const { lastLoginTime, isLoggedIn } = get();
+
+            if (!isLoggedIn || !lastLoginTime) return;
+
+            const now = Date.now();
+            const timeSinceLogin = now - lastLoginTime;
+
+            if (timeSinceLogin > AUTH_EXPIRY_MS) {
+              console.log("로그인 세션이 만료되었습니다.");
+              get().logout();
+            }
+          },
 
           // Firebase 인증 상태 초기화
           initAuth: () => {
+            // 앱 시작 시 만료 체크
+            get().checkAuthExpiry();
+
             const unsubscribe = onAuthStateChanged(auth, (user) => {
+              const { isLoggedIn, lastLoginTime } = get();
+
+              if (isLoggedIn && lastLoginTime) {
+                const timeSinceLogin = Date.now() - lastLoginTime;
+                if (timeSinceLogin > AUTH_EXPIRY_MS) {
+                  get().logout();
+                  return;
+                }
+              }
+
               set({
                 user,
                 isLoggedIn: !!user,
                 isLoading: false,
+                // Firebase에 user가 있으면 lastLoginTime 갱신
+                lastLoginTime: user ? Date.now() : null,
               });
             });
 
@@ -53,6 +90,7 @@ export const useAuthStore = create<AuthState>()(
               user,
               isLoggedIn: !!user,
               isLoading: false,
+              lastLoginTime: user ? Date.now() : null,
             });
           },
 
@@ -69,6 +107,7 @@ export const useAuthStore = create<AuthState>()(
                 user: userCredential.user,
                 isLoggedIn: true,
                 isLoading: false,
+                lastLoginTime: Date.now(),
               });
             } catch (error) {
               set({ isLoading: false });
@@ -90,6 +129,7 @@ export const useAuthStore = create<AuthState>()(
                 user: userCredential.user,
                 isLoggedIn: true,
                 isLoading: false,
+                lastLoginTime: null,
               });
             } catch (error) {
               set({ isLoading: false });
@@ -128,6 +168,7 @@ export const useAuthStore = create<AuthState>()(
                 user: userCredential.user,
                 isLoggedIn: true,
                 isLoading: false,
+                lastLoginTime: Date.now(),
               });
 
               return { isNewUser };
@@ -145,6 +186,7 @@ export const useAuthStore = create<AuthState>()(
               set({
                 user: null,
                 isLoggedIn: false,
+                lastLoginTime: null,
               });
             } catch (error) {
               console.error("로그아웃 실패:", error);
@@ -157,6 +199,7 @@ export const useAuthStore = create<AuthState>()(
           // user 객체는 직렬화가 복잡하므로 persist에서 제외
           partialize: (state) => ({
             isLoggedIn: state.isLoggedIn,
+            lastLoginTime: state.lastLoginTime,
           }),
         }
     )

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { REGIONS, getRegionCoords, TempRange } from "../../types";
 import { fetchWeatherForDate, tempRangeToString } from "../../lib/weatherUtils";
 import { createPost } from "../../lib/services/postService";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuthStore } from "../../store/useAuthStore";
 import SmallButton from "../SmallButton";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
@@ -30,7 +30,7 @@ export default function StepTwoUI({
                                     setContent,
                                   }: StepTwoUIProps) {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user } = useAuthStore((state) => state.user);
 
   const [openRegionDropdown, setOpenRegionDropdown] = useState(false);
   const [weatherInfo, setWeatherInfo] = useState<{

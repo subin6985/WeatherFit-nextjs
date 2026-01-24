@@ -5,13 +5,13 @@ import {useEffect, useRef, useState} from 'react';
 import { useParams } from 'next/navigation';
 import { PostDetail } from '../../../../types';
 import {deletePost, getPostById, toggleLike} from '../../../../lib/services/postService';
-import { useAuth } from '../../../../hooks/useAuth';
+import { useAuthStore } from "../../../../store/useAuthStore";
 import {useNavigationStore} from "../../../../store/useNavigationStore";
 
 export default function PostPage() {
   const { id } = useParams();
   const { setCurrentPage } = useNavigationStore();
-  const { user } = useAuth();
+  const { user } = useAuthStore((state) => state.user);
   const router = useRouter();
 
   const [post, setPost] = useState<PostDetail | null>(null);
