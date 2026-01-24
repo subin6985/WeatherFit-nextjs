@@ -12,7 +12,7 @@ import { db } from "../../../../../lib/firebase";
 
 export default function EditPage() {
   const router = useRouter();
-  const { user } = useAuthStore((state) => state.user);
+  const { user } = useAuthStore.getState();
   const { id } = useParams<String|null>();
 
   const [outfitRegion, setOutfitRegion] = useState<string>("");
@@ -28,6 +28,8 @@ export default function EditPage() {
   const [loading, setLoading] = useState(true);
 
   const fetchOriginalData = async () => {
+    if (!user) router.push(`/post/${id}`);
+
     try {
       const postDoc = await getDoc(doc(db, "posts", id));
 

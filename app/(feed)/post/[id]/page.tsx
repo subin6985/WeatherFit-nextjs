@@ -11,7 +11,7 @@ import {useNavigationStore} from "../../../../store/useNavigationStore";
 export default function PostPage() {
   const { id } = useParams();
   const { setCurrentPage } = useNavigationStore();
-  const { user } = useAuthStore((state) => state.user);
+  const { user } = useAuthStore.getState();
   const router = useRouter();
 
   const [post, setPost] = useState<PostDetail | null>(null);
@@ -68,7 +68,7 @@ export default function PostPage() {
       return;
     }
 
-    if (user.uid === post.member.memberId) {
+    if (user?.uid === post.member.memberId) {
       alert('본인 글에는 좋아요 할 수 없습니다.');
       return;
     }
@@ -161,7 +161,7 @@ export default function PostPage() {
             </div>
           </div>
           {
-            (post.member.memberId === user.uid) && (
+            (post.member.memberId === user?.uid) && (
                 <div className="flex justify-end" ref={menuRef}>
                   <button onClick={() => setOpenMenu(prev => !prev)}>
                     <img

@@ -30,7 +30,7 @@ export default function StepTwoUI({
                                     setContent,
                                   }: StepTwoUIProps) {
   const router = useRouter();
-  const { user } = useAuthStore((state) => state.user);
+  const { user } = useAuthStore.getState();
 
   const [openRegionDropdown, setOpenRegionDropdown] = useState(false);
   const [weatherInfo, setWeatherInfo] = useState<{
