@@ -11,7 +11,7 @@ import Button from "../../../../components/Button";
 
 export default function FinishGooglePage() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user } = useAuthStore.getState();
 
   const [nickname, setNickname] = useState("");
   const [isLoading, setIsLoading] = useState(false);

@@ -86,3 +86,15 @@ export const getRegionCoords = (regionName: string) => {
   const region = REGIONS.find((r) => r.name === regionName);
   return region ? { lat: region.latitude, lon: region.longitude } : null;
 };
+
+export interface BaseProfile {
+  id: string,
+  profilePhoto: string,
+  nickname: string,
+  email: string
+}
+
+export interface ProfileDetail extends BaseProfile {
+  gender: string,
+  password: string
+}

@@ -12,6 +12,7 @@ export default function WeatherClient() {
   const router = useRouter();
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { user } = useAuthStore.getState();
 
   const [bg, setBg] = useState<WeatherBackground>("bg-sunny");
   const [currTemp, setCurrTemp] = useState(25);
