@@ -3,15 +3,18 @@
 import {useRouter} from "next/navigation";
 import {useWriteStore} from "../../store/useWriteStore";
 import {useNavigationStore} from "../../store/useNavigationStore";
+import {useEffect} from "react";
 
 export default function FeedLayout({children}) {
   const router = useRouter();
   const { step, setStep } = useWriteStore();
   const { currentPage } = useNavigationStore();
 
-  const handleBackClick = () => {
-    console.log("currentPage:", currentPage);
+  useEffect(() => {
+    console.log("Current page:", currentPage);
+  }, [currentPage]);
 
+  const handleBackClick = () => {
     // feed 페이지
     if (currentPage === 'feed') {
       router.push('/');

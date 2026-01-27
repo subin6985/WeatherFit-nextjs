@@ -16,16 +16,10 @@ export default function SetPasswordUI({
                                         setPassword,
                                         onComplete,
                                       }: SetPasswordUIProps) {
-  const router = useRouter();
-
   const [confirmPw, setConfirmPw] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPwError, setConfirmPwError] = useState(false);
   const [complete, setComplete] = useState(false);
-
-  const returnToLogin = () => {
-    router.push("/login");
-  };
 
   const isValidPassword = (pw: string) => {
     // Firebase 비밀번호 요구사항: 최소 6자 (여기서는 더 강력한 규칙 사용)

@@ -2,14 +2,17 @@
 
 import {useRouter} from "next/navigation";
 import {useNavigationStore} from "../../store/useNavigationStore";
+import {useEffect} from "react";
 
 export default function MypageLayout({children}) {
   const router = useRouter();
   const { currentPage } = useNavigationStore();
 
-  const handleBackClick = () => {
-    console.log("currentPage:", currentPage);
+  useEffect(() => {
+    console.log("Current page:", currentPage);
+  }, [currentPage]);
 
+  const handleBackClick = () => {
     if (currentPage === 'mypage') {
       router.push('/');
       return;

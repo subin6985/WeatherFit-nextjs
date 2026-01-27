@@ -28,7 +28,10 @@ export default function EditPage() {
   const [loading, setLoading] = useState(true);
 
   const fetchOriginalData = async () => {
-    if (!user) router.push(`/post/${id}`);
+    if (!user) {
+      router.push(`/post/${id}`);
+      return;
+    }
 
     try {
       const postDoc = await getDoc(doc(db, "posts", id));

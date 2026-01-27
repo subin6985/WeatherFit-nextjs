@@ -193,16 +193,18 @@ export default function EditInfoPage () {
             ))}
           </div>
         </div>
-        <ProfileButton onClick={onPasswordClick} className="min-w-[257px]">
-          <>
-            <img
-              src="/Lock.png"
-              width={35}
-              height={35}
-            />
-            비밀번호 변경
-          </>
-        </ProfileButton>
+        {user.providerId !== "google.com" && (
+            <ProfileButton onClick={onPasswordClick} className="min-w-[257px]">
+              <>
+                <img
+                    src="/Lock.png"
+                    width={35}
+                    height={35}
+                />
+                비밀번호 변경
+              </>
+            </ProfileButton>
+        )}
       </div>
   );
 }

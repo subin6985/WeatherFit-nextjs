@@ -7,7 +7,7 @@ import {
   onAuthStateChanged,
   User,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithPopup, EmailAuthProvider, reauthenticateWithCredential, updatePassword,
 } from "firebase/auth";
 import {auth, db} from "../lib/firebase";
 import {doc, getDoc, setDoc} from "firebase/firestore";
@@ -194,6 +194,49 @@ export const useAuthStore = create<AuthState>()(
               throw error;
             }
           },
+
+          // 비밀번호 변경
+          changePassword: async (currentPassword, newPassword) => {
+            try {
+              const user = auth.currentUser;
+
+              if (!user || !user.email) {
+                throw new Error("로그인된 사용자가 없습니다.");
+              }
+
+              // Google 로그인 사용자는 비밀번호 변경 불가
+              const providerData = user.providerData[0];
+              if (providerData?.providerId === 'google.com') {
+                throw new Error("Google 계정은 비밀번호를 변경할 수 없습니다.");
+              }
+
+              // 1. 기존 비밀번호로 재인증
+              const credential = EmailAuthProvider.credential(
+                  user.email,
+                  currentPassword
+              );
+
+              await reauthenticateWithCredential(user, credential);
+
+              // 2. 새 비밀번호로 변경
+              await updatePassword(user, newPassword);
+
+              alert("비밀번호가 성공적으로 변경되었습니다.");
+            } catch (error: any) {
+              console.error("비밀번호 변경 실패:", error);
+
+              // 에러 메시지 처리
+              if (error.code === 'auth/wrong-password') {
+                throw new Error("현재 비밀번호가 올바르지 않습니다.");
+              } else if (error.code === 'auth/weak-password') {
+                throw new Error("새 비밀번호는 6자 이상이어야 합니다.");
+              } else if (error.code === 'auth/requires-recent-login') {
+                throw new Error("보안을 위해 다시 로그인해주세요.");
+              }
+
+              throw error;
+            }
+          }
         }),
         {
           name: "auth-storage",
