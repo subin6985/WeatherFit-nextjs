@@ -27,14 +27,12 @@ export default function EditPasswordPage () {
 
   useEffect(() => {
     setCurrentPage('password');
-  }, []);
 
-  useEffect(() => {
     if (isLoading) return;
 
     if (!isLoggedIn || !user) {
-      alert("비로그인 사용자는 접근할 수 없습니다.")
-      router.push("/");
+      alert("로그인이 필요합니다.");
+      router.push("/login");
       return;
     }
 
@@ -44,7 +42,7 @@ export default function EditPasswordPage () {
       router.push("/mypage/edit");
       return;
     }
-  }, [user]);
+  }, [isLoading, isLoggedIn, user]);
 
   const isValidPassword = (pw: string) => {
     const regex =

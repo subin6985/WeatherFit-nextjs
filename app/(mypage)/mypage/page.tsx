@@ -46,6 +46,11 @@ export default function MyPage() {
     if (user) {
       fetchProfile();
     }
+    else {
+      alert("로그인이 필요합니다.");
+      router.push("/login");
+      return;
+    }
   }, [user]);
 
   const onInfoClick = () => {

@@ -36,6 +36,11 @@ export default function EditInfoPage () {
     if (user) {
       fetchProfile();
     }
+    else {
+      alert("로그인이 필요합니다.");
+      router.push("/login");
+      return;
+    }
   }, [user]);
 
   const fetchProfile = async () => {
