@@ -12,7 +12,7 @@ import Input from "../../../../../components/Input";
 
 export default function EditPasswordPage () {
   const { setCurrentPage } = useNavigationStore();
-  const { user, changePassword } = useAuthStore();
+  const { user, isLoading, isLoggedIn, changePassword } = useAuthStore();
 
   const router = useRouter();
 
@@ -28,6 +28,23 @@ export default function EditPasswordPage () {
   useEffect(() => {
     setCurrentPage('password');
   }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (!isLoggedIn || !user) {
+      alert("비로그인 사용자는 접근할 수 없습니다.")
+      router.push("/");
+      return;
+    }
+
+    const providerData = user.providerData[0];
+    if (providerData?.providerId === 'google.com') {
+      alert("소셜 로그인 계정은 비밀번호를 변경할 수 없습니다.");
+      router.push("/mypage/edit");
+      return;
+    }
+  }, [user]);
 
   const isValidPassword = (pw: string) => {
     const regex =
@@ -99,11 +116,19 @@ export default function EditPasswordPage () {
     }
   }
 
+  if (isLoading) {
+    return (
+        <div className="flex items-center justify-center h-screen">
+          로딩 중...
+        </div>
+    );
+  }
+
   return (
       <div className="flex flex-col px-[45px] h-screen items-center">
         <div className="absolute top-[30px] right-[20px] z-20">
           <SmallButton onClick={handleComplete}
-                       disabled={!newPassword}
+                       disabled={!newPassword || loading || !complete}
           >
             저장
           </SmallButton>

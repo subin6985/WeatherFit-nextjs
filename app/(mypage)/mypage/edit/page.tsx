@@ -120,6 +120,12 @@ export default function EditInfoPage () {
     }
   }
 
+  // Google 로그인 여부 확인 함수
+  const isGoogleUser = () => {
+    if (!user) return false;
+    return user.providerData.some(provider => provider.providerId === 'google.com');
+  };
+
   return (
       <div className="flex flex-col px-[45px] h-screen items-center">
         <div className="absolute top-[30px] right-[20px] z-20">
@@ -193,7 +199,7 @@ export default function EditInfoPage () {
             ))}
           </div>
         </div>
-        {user.providerId !== "google.com" && (
+        {!isGoogleUser() && (
             <ProfileButton onClick={onPasswordClick} className="min-w-[257px]">
               <>
                 <img
