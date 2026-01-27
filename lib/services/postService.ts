@@ -222,7 +222,7 @@ export const updatePost = async (postId: string, data: UpdatePostData) => {
       temp: data.temp,
       tempRange: data.tempRange,
       region: data.region,
-      outfitDate: data.outfitDate,
+      outfitDate: data.outfitDate.toISOString(),
     })
   } catch (err) {
     console.log("게시물 수정 실패:", err);
