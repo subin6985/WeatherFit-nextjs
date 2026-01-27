@@ -161,6 +161,7 @@ export const useAuthStore = create<AuthState>()(
                   profilePhoto: user.photoURL || '',
                   createdAt: Date.now(),
                   provider: 'google',
+                  gender: "NO_SELECT"
                 });
               }
 

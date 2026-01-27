@@ -8,6 +8,8 @@ export default function MypageLayout({children}) {
   const { currentPage } = useNavigationStore();
 
   const handleBackClick = () => {
+    console.log("currentPage:", currentPage);
+
     if (currentPage === 'mypage') {
       router.push('/');
       return;

@@ -51,7 +51,8 @@ export default function FinishUI({
         nickname: nickname,
         email: user.email,
         profilePhoto: '',
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        gender: "NO_SELECT"
       });
 
       // 성공 → 로그인 화면으로

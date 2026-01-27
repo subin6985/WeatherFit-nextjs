@@ -57,6 +57,12 @@ export const GENDER_LIST: Gender[] = [
   Gender.NO_SELECT
 ];
 
+export const GENDER_LABEL: Record<Gender, string> = {
+  [Gender.FEMALE]: "여성",
+  [Gender.MALE]: "남성",
+  [Gender.NO_SELECT]: "선택 안함"
+};
+
 export interface Region {
   name: string;
   latitude: number;

@@ -10,6 +10,8 @@ export default function FeedLayout({children}) {
   const { currentPage } = useNavigationStore();
 
   const handleBackClick = () => {
+    console.log("currentPage:", currentPage);
+
     // feed 페이지
     if (currentPage === 'feed') {
       router.push('/');
@@ -31,6 +33,7 @@ export default function FeedLayout({children}) {
     // post 상세 페이지
     if (currentPage === 'post') {
       router.push('/feed');
+      return;
     }
 
     // 기본 동작
