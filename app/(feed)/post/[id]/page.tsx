@@ -141,7 +141,7 @@ export default function PostPage() {
   return (
       <div>
         <div className="flex px-[20px] py-[18px] items-center justify-between">
-          <div className="flex flex-row gap-[9px]">
+          <div className="flex flex-row gap-[10px]">
             {post.member.profilePhoto ? (
                 <img
                     src={post.member.profilePhoto}

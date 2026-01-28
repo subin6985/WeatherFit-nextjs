@@ -122,6 +122,10 @@ export default function EditPasswordPage () {
     );
   }
 
+  if (!isLoggedIn || !user) {
+    return null;
+  }
+
   return (
       <div className="flex flex-col px-[45px] h-screen items-center">
         <div className="absolute top-[30px] right-[20px] z-20">

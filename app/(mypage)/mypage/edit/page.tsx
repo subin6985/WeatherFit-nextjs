@@ -131,6 +131,10 @@ export default function EditInfoPage () {
     return user.providerData.some(provider => provider.providerId === 'google.com');
   };
 
+  if (!user) {
+    return null;
+  }
+
   return (
       <div className="flex flex-col px-[45px] h-screen items-center">
         <div className="absolute top-[30px] right-[20px] z-20">

@@ -58,11 +58,15 @@ export default function MyPage() {
   }
 
   const onPostClick = () => {
-    router.push("/mypage/post");
+    router.push("/mypage/mypost");
   }
 
   const onLikeClick = () => {
     router.push("/mypage/like");
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (

@@ -5,9 +5,9 @@ import {useCallback, useEffect} from "react";
 import FeedGrid from "../../../../components/FeedGrid";
 import {useRouter} from "next/navigation";
 import {useAuthStore} from "../../../../store/useAuthStore";
-import {getLikedPosts} from "../../../../lib/services/postService";
+import {getMyPosts} from "../../../../lib/services/postService";
 
-export default function LikePage () {
+export default function MypostPage () {
   const router = useRouter();
   const { user, isLoggedIn, isLoading } = useAuthStore();
   const { setCurrentPage } = useNavigationStore();
@@ -26,12 +26,12 @@ export default function LikePage () {
     setCurrentPage('detail');
   }, []);
 
-  const fetchLikedPosts = useCallback(
+  const fetchMyPosts = useCallback(
       (lastDoc, pageSize, filters) => {
         if (!user?.uid) {
           return Promise.resolve({ posts: [], lastdoc: null, hasMore: false });
         }
-        return getLikedPosts(user.uid, lastDoc, pageSize, filters);
+        return getMyPosts(user.uid, lastDoc, pageSize, filters);
       },
       [user?.uid]
   );
@@ -50,9 +50,9 @@ export default function LikePage () {
 
   return (
       <FeedGrid
-          title="좋아요 한 게시물"
-          fetchFunction={fetchLikedPosts}
-          emptyMessage="좋아요 한 게시물이 없습니다."
+          title="내가 작성한 게시물"
+          fetchFunction={fetchMyPosts}
+          emptyMessage="내가 작성한 게시물이 없습니다."
       />
   );
 }

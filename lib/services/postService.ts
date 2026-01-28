@@ -241,3 +241,131 @@ export const deletePost = async (postId: string, userId: string) => {
     console.log(e);
   }
 }
+
+// 내가 좋아요 한 게시물 가져오기
+export const getLikedPosts = async (
+    userId: string,
+    lastDoc?: DocumentSnapshot | null,
+    pageSize: number = 12,
+    filters?: {
+      tempRanges?: TempRange[];
+      genders?: Gender[];
+      order?: 'latest' | 'popular';
+    }
+) => {
+  try {
+    const postsRef = collection(db, 'posts');
+    let q = query(postsRef);
+
+    q = query(q, where('likedBy', 'array-contains', userId));
+
+    if (filters?.tempRanges && filters.tempRanges.length > 0) {
+      q = query(q, where('tempRange', 'in', filters.tempRanges));
+    }
+
+    if (filters?.genders && filters.genders.length > 0) {
+      q = query(q, where('gender', 'in', filters.genders));
+    }
+
+    if (filters?.order === 'popular') {
+      q = query(q, orderBy('likes', 'desc'));
+    } else {
+      q = query(q, orderBy('createdAt', 'desc'));
+    }
+
+    if (lastDoc) {
+      q = query(q, startAfter(lastDoc));
+    }
+
+    q = query(q, limit(pageSize));
+
+    const snapshot = await getDocs(q);
+    const posts: PostSummary[] = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        createdAt: data.createdAt,
+        photo: data.photo,
+        temp: data.temp,
+        tempRange: data.tempRange,
+        region: data.region,
+        outfitDate: data.outfitDate,
+        likes: data.likes || 0,
+        gender: data.gender,
+      } as PostSummary;
+    });
+
+    return {
+      posts,
+      lastDoc: snapshot.docs[snapshot.docs.length - 1] || null,
+      hasMore: snapshot.docs.length === pageSize
+    };
+  } catch (error) {
+    console.error("Error fetching liked posts:", error);
+    throw new Error("좋아요 한 게시물을 불러오지 못했습니다.");
+  }
+};
+
+// 내가 작성한 게시물 가져오기
+export const getMyPosts = async (
+    userId: string,
+    lastDoc?: DocumentSnapshot | null,
+    pageSize: number = 12,
+    filters?: {
+      tempRanges?: TempRange[];
+      genders?: Gender[];
+      order?: 'latest' | 'popular';
+    }
+) => {
+  try {
+    const postsRef = collection(db, 'posts');
+    let q = query(postsRef);
+
+    q = query(q, where('memberId', '==', userId));
+
+    if (filters?.tempRanges && filters.tempRanges.length > 0) {
+      q = query(q, where('tempRange', 'in', filters.tempRanges));
+    }
+
+    if (filters?.genders && filters.genders.length > 0) {
+      q = query(q, where('gender', 'in', filters.genders));
+    }
+
+    if (filters?.order === 'popular') {
+      q = query(q, orderBy('likes', 'desc'));
+    } else {
+      q = query(q, orderBy('createdAt', 'desc'));
+    }
+
+    if (lastDoc) {
+      q = query(q, startAfter(lastDoc));
+    }
+
+    q = query(q, limit(pageSize));
+
+    const snapshot = await getDocs(q);
+    const posts: PostSummary[] = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        createdAt: data.createdAt,
+        photo: data.photo,
+        temp: data.temp,
+        tempRange: data.tempRange,
+        region: data.region,
+        outfitDate: data.outfitDate,
+        likes: data.likes || 0,
+        gender: data.gender,
+      } as PostSummary;
+    });
+
+    return {
+      posts,
+      lastDoc: snapshot.docs[snapshot.docs.length - 1] || null,
+      hasMore: snapshot.docs.length === pageSize
+    };
+  } catch (error) {
+    console.error("Error fetching liked posts:", error);
+    throw new Error("내가 작성한 게시물을 불러오지 못했습니다.");
+  }
+};
