@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { httpsCallable } from "firebase/functions";
 import Input from "../Input";
 import SmallButton from "../SmallButton";
 import Button from "../Button";
 import {functions} from "../../lib/firebase";
+import {useAuthStore} from "../../store/useAuthStore";
 
 interface EmailVerificationUIProps {
   email: string;
@@ -20,6 +21,7 @@ export default function EmailVerificationUI({
                                               onComplete,
                                             }: EmailVerificationUIProps) {
   const router = useRouter();
+  const { isLoading, isLoggedIn } = useAuthStore();
 
   const [emailError, setEmailError] = useState(false);
   const [sent, setSent] = useState(false);
@@ -29,6 +31,15 @@ export default function EmailVerificationUI({
   const [complete, setComplete] = useState(false);
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (isLoggedIn) {
+      router.push("/");
+      return;
+    }
+  }, [isLoading, isLoggedIn, router]);
 
   // 이메일 형식 검증
   const isValidEmail = (email: string) => {
@@ -107,6 +118,8 @@ export default function EmailVerificationUI({
       setLoading(false);
     }
   };
+
+  if (isLoading || isLoggedIn) return null;
 
   return (
       <div className="flex flex-col relative justify-center items-center">

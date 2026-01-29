@@ -65,6 +65,10 @@ export default function MyPage() {
     router.push("/mypage/like");
   }
 
+  const onDeleteClick = () => {
+    router.push("/delete-account");
+  }
+
   if (!user) {
     return null;
   }
@@ -118,6 +122,10 @@ export default function MyPage() {
               내가 좋아요 한 게시글
             </>
           </ProfileButton>
+          <p className="text-warning text-center
+                        underline cursor-pointer p-1
+                        hover:text-warningAccent"
+             onClick={onDeleteClick}>탈퇴하기</p>
         </div>
       </div>
   );

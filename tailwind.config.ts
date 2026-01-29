@@ -26,6 +26,7 @@ const config: Config = {
         base: "#1E1E1E",
         point: "#FFCC00",
         warning: "#FF383C",
+        warningAccent: "#d50104",
         primary: "#51ABFF",
         accent: "#2C86DB",
       }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../../store/useAuthStore"
 import Input from "../../../components/Input";
@@ -8,17 +8,26 @@ import Button from "../../../components/Button";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, loginWithGoogle } = useAuthStore();
+  const { login, loginWithGoogle, isLoading, isLoggedIn } = useAuthStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (isLoggedIn) {
+      router.push("/");
+      return;
+    }
+  }, [isLoading, isLoggedIn, router]);
 
   const handleLogin = async () => {
     if (email === "" || password === "") return;
 
-    setIsLoading(true);
+    setLoading(true);
     setError(false);
 
     try {
@@ -28,12 +37,12 @@ export default function LoginPage() {
       console.error("로그인 실패: ", e);
       setError(true);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
-    setIsLoading(true);
+    setLoading(true);
     setError(false);
 
     try {
@@ -55,7 +64,7 @@ export default function LoginPage() {
         setError(true);
       }
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -66,6 +75,8 @@ export default function LoginPage() {
   const handleSignupButton = () => {
     router.push("/signup");
   };
+
+  if (isLoading || isLoggedIn) return null;
 
   return (
       <div className="flex flex-col relative h-screen justify-center items-center">
@@ -116,12 +127,12 @@ export default function LoginPage() {
           )}
         </div>
 
-        <Button disabled={isLoading} onClick={handleLogin}>
-          {isLoading ? "로그인 중..." : "로그인"}
+        <Button disabled={loading} onClick={handleLogin}>
+          {loading ? "로그인 중..." : "로그인"}
         </Button>
 
         <div className="mt-[17px] flex flex-row justify-center gap-[25px]">
-          <button onClick={handleGoogleLogin} disabled={isLoading}>
+          <button onClick={handleGoogleLogin} disabled={loading}>
             <img
                 src="/Google.png"
                 alt="Google Login"

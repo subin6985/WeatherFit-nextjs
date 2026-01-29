@@ -7,10 +7,24 @@ import {
   onAuthStateChanged,
   User,
   GoogleAuthProvider,
-  signInWithPopup, EmailAuthProvider, reauthenticateWithCredential, updatePassword,
+  EmailAuthProvider,
+  signInWithPopup,
+  reauthenticateWithCredential,
+  updatePassword,
+  deleteUser, reauthenticateWithPopup
 } from "firebase/auth";
-import {auth, db} from "../lib/firebase";
-import {doc, getDoc, setDoc} from "firebase/firestore";
+import {auth, db, storage} from "../lib/firebase";
+import {
+  collection, deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+  writeBatch
+} from "firebase/firestore";
+import {deleteObject, ref} from "firebase/storage";
 
 interface AuthState {
   user: User | null;
@@ -196,7 +210,7 @@ export const useAuthStore = create<AuthState>()(
           },
 
           // 비밀번호 변경
-          changePassword: async (currentPassword, newPassword) => {
+          changePassword: async (currentPassword: string, newPassword: string) => {
             try {
               const user = auth.currentUser;
 
@@ -234,6 +248,197 @@ export const useAuthStore = create<AuthState>()(
                 throw new Error("보안을 위해 다시 로그인해주세요.");
               }
 
+              throw error;
+            }
+          },
+
+          // 회원 탈퇴
+          deleteAccount: async (password: string) => {
+            try {
+              set({ isLoading: true });
+
+              const user = auth.currentUser;
+
+              if (!user || !user.email) {
+                throw new Error("로그인된 사용자가 없습니다.");
+              }
+
+              const credential = EmailAuthProvider.credential(
+                  user.email,
+                  password
+              );
+
+              await reauthenticateWithCredential(user, credential);
+
+              const userId = user.uid;
+
+              // 사용자가 작성한 게시물 삭제
+              const postsQuery = query(
+                  collection(db, "posts"),
+                  where("memberId", "==", userId)
+              );
+              const postsSnapshot = await getDocs(postsQuery);
+
+              // Storage에서 게시물 이미지 삭제
+              for (const postDoc of postsSnapshot.docs) {
+                try {
+                  const photoRef = ref(storage, `posts/${userId}/${postDoc.id}`);
+                  await deleteObject(photoRef);
+                } catch (error) {
+                  console.log("이미지 삭제 실패:", error);
+                }
+              }
+
+              // Firestore에서 게시물 삭제
+              const batch = writeBatch(db);
+              postsSnapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+              });
+              await batch.commit();
+
+              // 다른 사용자 게시물의 좋아요 기록에서 제거
+              const likedPostsQuery = query(
+                  collection(db, "posts"),
+                  where("likedBy", "array-contains", userId)
+              );
+              const likedPostsSnapshot = await getDocs(likedPostsQuery);
+
+              const likeBatch = writeBatch(db);
+              likedPostsSnapshot.docs.forEach(postDoc => {
+                const postRef = doc(db, "posts", postDoc.id);
+                const currentLikedBy = postDoc.data().likedBy || [];
+                const newLikedBy = currentLikedBy.filter(id => id !== userId);
+                const newLikes = Math.max(0, (postDoc.data().likes || 0) - 1);
+
+                likeBatch.update(postRef, {
+                  likedBy: newLikedBy,
+                  likes: newLikes
+                });
+              });
+              await likeBatch.commit();
+
+              // Storage에서 프로필 사진 삭제
+              try {
+                const avatarRef = ref(storage, `/avatars/${userId}`);
+                await deleteObject(avatarRef);
+              } catch (error) {
+                console.log("프로필 사진 삭제 실패:", error);
+              }
+
+              // Firestore에서 사용자 문서 삭제
+              await deleteDoc(doc(db, "users", userId));
+
+              // Firebase Auth에서 사용자 삭제
+              await deleteUser(user);
+
+              set({
+                user: null,
+                isLoggedIn: false,
+                isLoading: false,
+              });
+
+              return true;
+            } catch (error: any) {
+              console.error("회원 탈퇴 실패:", error);
+
+              // 에러 메시지 처리
+              if (error.code === 'auth/wrong-password') {
+                throw new Error("비밀번호가 올바르지 않습니다.");
+              } else if (error.code === 'auth/requires-recent-login') {
+                throw new Error("보안을 위해 다시 로그인해주세요.");
+              }
+
+              throw error;
+            }
+          },
+
+          // 구글 로그인 회원 탈퇴
+          deleteAccountGoogle: async () => {
+            try {
+              set({ isLoading: true });
+
+              const user = auth.currentUser;
+
+              if (!user) {
+                throw new Error("로그인된 사용자가 없습니다.");
+              }
+
+              const userId = user.uid;
+
+              // Google 로그인 사용자인지 확인
+              const providerData = user.providerData[0];
+              if (providerData?.providerId !== 'google.com') {
+                throw new Error("이메일 로그인 사용자는 비밀번호를 입력해주세요.");
+              }
+
+              // 재인증 (Google)
+              const provider = new GoogleAuthProvider();
+              await reauthenticateWithPopup(user, provider);
+
+              const postsQuery = query(
+                  collection(db, "posts"),
+                  where("memberId", "==", userId)
+              );
+              const postsSnapshot = await getDocs(postsQuery);
+
+              for (const postDoc of postsSnapshot.docs) {
+                try {
+                  const photoRef = ref(storage, `posts/${userId}/${postDoc.id}`);
+                  await deleteObject(photoRef);
+                } catch (error) {
+                  console.log("이미지 삭제 실패:", error);
+                }
+              }
+
+              const batch = writeBatch(db);
+              postsSnapshot.docs.forEach(doc => {
+                batch.delete(doc.ref);
+              });
+              await batch.commit();
+
+              const likedPostsQuery = query(
+                  collection(db, "posts"),
+                  where("likedBy", "array-contains", userId)
+              );
+              const likedPostsSnapshot = await getDocs(likedPostsQuery);
+
+              const likeBatch = writeBatch(db);
+              likedPostsSnapshot.docs.forEach(postDoc => {
+                const postRef = doc(db, "posts", postDoc.id);
+                const currentLikedBy = postDoc.data().likedBy || [];
+                const newLikedBy = currentLikedBy.filter(id => id !== userId);
+                const newLikes = Math.max(0, (postDoc.data().likes || 0) - 1);
+
+                likeBatch.update(postRef, {
+                  likedBy: newLikedBy,
+                  likes: newLikes
+                });
+              });
+              await likeBatch.commit();
+
+              try {
+                const avatarRef = ref(storage, `/avatars/${userId}`);
+                await deleteObject(avatarRef);
+              } catch (error) {
+                console.log("프로필 사진 삭제 실패:", error);
+              }
+
+              await deleteDoc(doc(db, "users", userId));
+
+              await deleteUser(user);
+
+              set({
+                user: null,
+                isLoggedIn: false,
+                isLoading: false,
+              });
+
+              return true;
+
+              return true;
+            } catch (error: any) {
+              set({ isLoading: false });
+              console.error("회원 탈퇴 실패:", error);
               throw error;
             }
           }

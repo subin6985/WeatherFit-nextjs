@@ -10,6 +10,7 @@ export default function Button({
                                  children,
                                  onClick,
                                  disabled = false,
+                                 isForDelete = false,
                                }: ButtonProps) {
   return (
       <button
@@ -21,7 +22,9 @@ export default function Button({
                  ${
               disabled
                   ? "bg-light cursor-default"
-                  : "bg-primary hover:bg-accent"
+                  : (isForDelete
+                      ? "bg-warning hover:bg-warningAccent"
+                      : "bg-primary hover:bg-accent")
           }`}
           disabled={disabled}
       >
