@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Ratio from "./Ratio";
 import {useAuthStore} from "../store/useAuthStore";
 import {auth} from "../lib/firebase";
+import {useNavigationStore} from "../store/useNavigationStore";
 
 type WeatherBackground = "bg-sunny" | "bg-cloudy" | "bg-snowy" | "bg-rainy";
 
@@ -13,6 +14,7 @@ export default function WeatherClient() {
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { user } = useAuthStore.getState();
+  const { setCurrentPage } = useNavigationStore();
 
   const [bg, setBg] = useState<WeatherBackground>("bg-sunny");
   const [currTemp, setCurrTemp] = useState(25);
@@ -70,6 +72,8 @@ export default function WeatherClient() {
   };
 
   useEffect(() => {
+    setCurrentPage('normal');
+
     navigator.geolocation.getCurrentPosition(
         (pos) => {
           const { latitude, longitude } = pos.coords;

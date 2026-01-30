@@ -39,7 +39,7 @@ export default function MyPage() {
   useEffect(() => {
     if (!user) return;
 
-    setCurrentPage('mypage');
+    setCurrentPage('normal');
   }, []);
 
   useEffect(() => {

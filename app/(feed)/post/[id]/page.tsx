@@ -22,7 +22,7 @@ export default function PostPage() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setCurrentPage('post');
+    setCurrentPage('normal');
   }, []);
 
   useEffect(() => {

@@ -26,7 +26,7 @@ export default function EditPasswordPage () {
   const [complete, setComplete] = useState(false);
 
   useEffect(() => {
-    setCurrentPage('password');
+    setCurrentPage('normal');
 
     if (isLoading) return;
 

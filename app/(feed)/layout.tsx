@@ -15,12 +15,6 @@ export default function FeedLayout({children}) {
   }, [currentPage]);
 
   const handleBackClick = () => {
-    // feed 페이지
-    if (currentPage === 'feed') {
-      router.push('/');
-      return;
-    }
-
     // write 페이지 1단계
     if (currentPage === 'write' && step === 1) {
       router.push('/feed');
@@ -30,12 +24,6 @@ export default function FeedLayout({children}) {
     // write 페이지 2단계
     if (currentPage === 'write' && step === 2) {
       setStep(1);
-      return;
-    }
-
-    // post 상세 페이지
-    if (currentPage === 'post') {
-      router.push('/feed');
       return;
     }
 

@@ -13,22 +13,6 @@ export default function MypageLayout({children}) {
   }, [currentPage]);
 
   const handleBackClick = () => {
-    if (currentPage === 'mypage') {
-      router.push('/');
-      return;
-    }
-
-    if (currentPage === 'detail') {
-      router.push('/mypage');
-      return;
-    }
-
-    if (currentPage === 'password') {
-      router.push('/mypage/edit');
-      return;
-    }
-
-    // 기본 동작
     router.back();
   }
 
@@ -40,7 +24,7 @@ export default function MypageLayout({children}) {
         >
           <img src="/Return.png" alt="뒤로가기" width={40} height={40}/>
         </button>
-        <div className="w-full h-[80px] bg-white shrink-0 z-10"/>
+        <div className="w-full h-[80px] bg-white shadow-[0px_2px_5px_rgba(0,0,0,0.1)] shrink-0 z-10"/>
 
           {children}
       </div>

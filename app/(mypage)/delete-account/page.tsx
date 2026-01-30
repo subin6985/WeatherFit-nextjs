@@ -14,6 +14,8 @@ export default function DeleteAccountPage() {
   const [confirmText, setConfirmText] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const isGoogleUser = user?.providerData[0]?.providerId === "google.com";
+
   const handleDelete = async () => {
     // 확인 문구 체크
     if (confirmText !== "회원탈퇴") {

@@ -23,7 +23,7 @@ export default function LikePage () {
   }, [user, isLoading, isLoading, router]);
 
   useEffect(() => {
-    setCurrentPage('detail');
+    setCurrentPage('normal');
   }, []);
 
   const fetchLikedPosts = useCallback(

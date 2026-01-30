@@ -29,7 +29,7 @@ export default function EditInfoPage () {
   useEffect(() => {
     if (!user) return;
 
-    setCurrentPage('detail');
+    setCurrentPage('normal');
   }, []);
 
   useEffect(() => {

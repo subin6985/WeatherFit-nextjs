@@ -23,7 +23,7 @@ export default function MypostPage () {
   }, [user, isLoading, isLoading, router]);
 
   useEffect(() => {
-    setCurrentPage('detail');
+    setCurrentPage('normal');
   }, []);
 
   const fetchMyPosts = useCallback(
