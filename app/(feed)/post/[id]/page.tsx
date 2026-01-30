@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import {useEffect, useRef, useState} from 'react';
 import { useParams } from 'next/navigation';
 import { PostDetail } from '../../../../types';
-import {deletePost, getPostById, toggleLike} from '../../../../lib/services/postService';
+import {deletePost, getPostById, subscribeLikes, toggleLike} from '../../../../lib/services/postService';
 import { useAuthStore } from "../../../../store/useAuthStore";
 import {useNavigationStore} from "../../../../store/useNavigationStore";
 
@@ -18,6 +18,10 @@ export default function PostPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openMenu, setOpenMenu] = useState(false);
+
+  const [likes, setLikes] = useState(0);
+  const [isLikedByMe, setIsLikedByMe] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
 
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -43,6 +47,26 @@ export default function PostPage() {
     };
 
     fetchPost();
+  }, [id, user]);
+
+  // 실시간 좋아요 구독
+  useEffect(() => {
+    if (!id || !user) return;
+
+    // 실시간 리스너 등록
+    const unsubscribe = subscribeLikes(
+        id as string,
+        user.uid,
+        (data) => {
+          setLikes(data.likes);
+          setIsLikedByMe(data.isLikedByMe);
+        }
+    );
+
+    // 컴포넌트 언마운트 시 구독 해제
+    return () => {
+      unsubscribe();
+    };
   }, [id, user]);
 
   // 외부 클릭 감지
@@ -74,17 +98,13 @@ export default function PostPage() {
     }
 
     try {
-      const result = await toggleLike(post.id, user.uid);
-      setPost(prev =>
-          prev ? {
-            ...prev,
-            likes: result.likes,
-            isLikedByMe: result.isLikedByMe,
-          } : null
-      );
+      setIsToggling(true);
+      await toggleLike(id as string, user.uid);
     } catch (e) {
       console.error('Failed to toggle like:', e);
       alert('좋아요 처리에 실패했습니다.');
+    } finally {
+      setIsToggling(false);
     }
   };
 
@@ -209,15 +229,16 @@ export default function PostPage() {
         <div className="pt-[10px] pl-[10px]">
           <button
               onClick={handleToggleLike}
+              disabled={isToggling}
               className="flex items-center gap-[10px] text-base text-[14px]"
           >
             <img
-                src={post.isLikedByMe ? '/Heart-full.png' : '/Heart.png'}
+                src={isLikedByMe ? '/Heart-full.png' : '/Heart.png'}
                 alt="좋아요"
                 width={30}
                 height={30}
             />
-            {post.likes}
+            {likes}
           </button>
         </div>
 

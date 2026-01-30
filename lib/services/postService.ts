@@ -187,7 +187,21 @@ export const subscribeLikes = (
 ) => {
   const postRef = doc(db, 'posts', postId);
 
-  //
+  // 실시간 리스너 등록
+  const unsubscribe = onSnapshot(postRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.data();
+      const isLikedByMe = data.likedBy?.includes(userId) || false;
+
+      callback({
+        likes: data.likes || 0,
+        isLikedByMe
+      })
+    }
+  });
+
+  // 구독 해제 함수 반환
+  return unsubscribe;
 };
 
 export const toggleLike = async (postId: string, userId: string) => {
