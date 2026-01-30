@@ -7,6 +7,7 @@ import {
   getDocs,
   query,
   orderBy,
+  onSnapshot,
   where,
   updateDoc,
   increment,
@@ -15,7 +16,7 @@ import {
   limit,
   startAfter,
   DocumentSnapshot,
-  serverTimestamp, deleteDoc
+  deleteDoc
 } from 'firebase/firestore';
 import {auth, db, storage} from '../firebase';
 import { PostDetail, PostSummary, TempRange, Gender } from '../../types';
@@ -176,6 +177,17 @@ export const getPostById = async (postId: string, userId?: string) => {
     console.error('Error fetching post:', error);
     throw new Error('게시글을 불러오지 못했습니다.');
   }
+};
+
+// 실시간 좋아요 구독
+export const subscribeLikes = (
+    postId: string,
+    userId: string,
+    callback: (data: { likes: number; isLikedByMe: boolean }) => void
+) => {
+  const postRef = doc(db, 'posts', postId);
+
+  //
 };
 
 export const toggleLike = async (postId: string, userId: string) => {

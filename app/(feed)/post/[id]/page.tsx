@@ -221,7 +221,7 @@ export default function PostPage() {
           </button>
         </div>
 
-        <div className="text-[16px] p-[10px] whitespace-pre-line">
+        <div className="text-[16px] p-[10px] whitespace-pre-line break-all">
           {post.post}
         </div>
       </div>

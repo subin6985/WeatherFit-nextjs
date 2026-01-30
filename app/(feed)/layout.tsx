@@ -32,7 +32,7 @@ export default function FeedLayout({children}) {
   }
 
   return (
-      <div className="flex flex-col overflow-hidden relative h-screen justify-start">
+      <div className="flex flex-col overflow-y-scroll no-scrollbar relative h-screen justify-start">
         <button
             onClick={handleBackClick}
             className="absolute left-[20px] top-[30px] z-20"
