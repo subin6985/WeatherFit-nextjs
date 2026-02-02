@@ -1,7 +1,7 @@
 import {
   collection,
   doc, addDoc, getDoc, getDocs, deleteDoc, updateDoc,
-  query, where, orderBy, increment, writeBatch,
+  query, where, orderBy, increment, writeBatch, onSnapshot,
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Comment, CommentWithReplies } from "../../types";
@@ -253,3 +253,22 @@ export const deleteUserComments = async (userId: string) => {
     }
   }
 }
+
+// 댓글 수 가져오기
+export const getCommentCount = async (postId: string): Promise<number> => {
+  const commentsRef = collection(db, 'posts', postId, 'comments');
+  const snapshot = await getDocs(commentsRef);
+  return snapshot.size;
+};
+
+// 실시간 댓글 수 구독
+export const subscribeCommentCount = (
+    postId: string,
+    callback: (count: number) => void
+) => {
+  const commentsRef = collection(db, 'posts', postId, 'comments');
+
+  return onSnapshot(commentsRef, (snapshot) => {
+    callback(snapshot.size);
+  });
+};

@@ -8,11 +8,14 @@ import {deletePost, getPostById, subscribeLikes, toggleLike} from '../../../../l
 import { useAuthStore } from "../../../../store/useAuthStore";
 import {useNavigationStore} from "../../../../store/useNavigationStore";
 import CommentSection from "../../../../components/comment/CommentSection";
+import {subscribeCommentCount} from "../../../../lib/services/commentService";
+import {useCommentStore} from "../../../../store/useCommentStore";
 
 export default function PostPage() {
   const { id } = useParams();
   const { setCurrentPage } = useNavigationStore();
   const { user } = useAuthStore.getState();
+  const { isCommentOpen, setIsCommentOpen, toggleComment } = useCommentStore();
   const router = useRouter();
 
   const [post, setPost] = useState<PostDetail | null>(null);
@@ -23,6 +26,8 @@ export default function PostPage() {
   const [likes, setLikes] = useState(0);
   const [isLikedByMe, setIsLikedByMe] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+
+  const [commentCount, setCommentCount] = useState(0);
 
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -69,6 +74,22 @@ export default function PostPage() {
       unsubscribe();
     };
   }, [id, user]);
+
+  // 실시간 댓글 수 구독
+  useEffect(() => {
+    if (!id) return;
+
+    const unsubscribe = subscribeCommentCount(
+        id as string,
+        (count) => {
+          setCommentCount(count);
+        }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [id]);
 
   // 외부 클릭 감지
   useEffect(() => {
@@ -160,93 +181,127 @@ export default function PostPage() {
   if (!post) return null;
 
   return (
-      <div>
-        <div className="flex px-[20px] py-[18px] items-center justify-between">
-          <div className="flex flex-row gap-[10px]">
-            {post.member.profilePhoto ? (
-                <img
-                    src={post.member.profilePhoto}
-                    alt={post.member.nickname}
-                    width={52}
-                    height={52}
-                    className="rounded-full object-cover"
-                />
-            ) : (
-                <div className="w-[52px] h-[52px] rounded-full bg-light" />
-            )}
-            <div className="flex flex-col gap-[2px]">
-              <div className="text-[16px] text-base">{post.member.nickname}</div>
-              <div className="text-[16px] text-middle">
-                {formatDate(post.createdAt)} · {post.temp}℃
+      <div className="flex h-screen">
+        <div className={`flex flex-col transition-all duration-300
+                         ${isCommentOpen ? 'w-1/2' : 'w-full'}`}>
+          <div className="flex px-[20px] py-[18px] items-center justify-between">
+            <div className="flex flex-row gap-[10px]">
+              {post.member.profilePhoto ? (
+                  <img
+                      src={post.member.profilePhoto}
+                      alt={post.member.nickname}
+                      width={52}
+                      height={52}
+                      className="rounded-full object-cover"
+                  />
+              ) : (
+                  <div className="w-[52px] h-[52px] rounded-full bg-light" />
+              )}
+              <div className="flex flex-col gap-[2px]">
+                <div className="text-[16px] text-base">{post.member.nickname}</div>
+                <div className="text-[16px] text-middle">
+                  {formatDate(post.createdAt)} · {post.temp}℃
+                </div>
               </div>
             </div>
+            {
+              (post.member.memberId === user?.uid) && (
+                  <div className="flex justify-end" ref={menuRef}>
+                    <button onClick={() => setOpenMenu(prev => !prev)}>
+                      <img
+                        src="/Kebab-Menu.png"
+                        alt="menu"
+                        width={36}
+                        height={36}
+                      />
+                    </button>
+                    {openMenu && (
+                        <div className="absolute mt-[40px]
+                              flex flex-col w-[60px] p-[5px] shadow-[2px_2px_4px_rgba(0,0,0,0.25)]
+                              bg-white border-[1px] border-light rounded-[10px]">
+                          <button
+                              className="hover:bg-snow rounded p-[3px]"
+                              onClick={handleEdit}
+                          >
+                            수정
+                          </button>
+                          <button
+                              className="hover:bg-snow rounded p-[3px] text-warning"
+                              onClick={handleDelete}
+                          >
+                            삭제
+                          </button>
+                        </div>
+                    )}
+                  </div>
+                )
+            }
           </div>
-          {
-            (post.member.memberId === user?.uid) && (
-                <div className="flex justify-end" ref={menuRef}>
-                  <button onClick={() => setOpenMenu(prev => !prev)}>
-                    <img
-                      src="/Kebab-Menu.png"
-                      alt="menu"
-                      width={36}
-                      height={36}
-                    />
-                  </button>
-                  {openMenu && (
-                      <div className="absolute mt-[40px]
-                            flex flex-col w-[60px] p-[5px] shadow-[2px_2px_4px_rgba(0,0,0,0.25)]
-                            bg-white border-[1px] border-light rounded-[10px]">
-                        <button
-                            className="hover:bg-snow rounded p-[3px]"
-                            onClick={handleEdit}
-                        >
-                          수정
-                        </button>
-                        <button
-                            className="hover:bg-snow rounded p-[3px] text-warning"
-                            onClick={handleDelete}
-                        >
-                          삭제
-                        </button>
-                      </div>
-                  )}
-                </div>
-              )
-          }
-        </div>
 
-        <div>
-          {post.photo ? (
+          <div className="flex-1 overflow-y-auto">
+            {post.photo ? (
+                <img
+                    src={post.photo}
+                    alt="포스트 이미지"
+                    className="w-full h-[393px] object-cover"
+                />
+            ) : (
+                <div className="w-full h-[393px] bg-light" />
+            )}
+          </div>
+
+          <div className="flex items-center gap-[20px] pt-[10px] pl-[10px]">
+            <button
+                onClick={handleToggleLike}
+                disabled={isToggling}
+                className="flex items-center gap-[10px] text-base text-[14px]"
+            >
               <img
-                  src={post.photo}
-                  alt="포스트 이미지"
-                  className="w-full h-[393px] object-cover"
+                  src={isLikedByMe ? '/Heart-full.png' : '/Heart.png'}
+                  alt="좋아요"
+                  width={30}
+                  height={30}
               />
-          ) : (
-              <div className="w-full h-[393px] bg-light" />
-          )}
-        </div>
+              {likes}
+            </button>
 
-        <div className="pt-[10px] pl-[10px]">
-          <button
-              onClick={handleToggleLike}
-              disabled={isToggling}
-              className="flex items-center gap-[10px] text-base text-[14px]"
-          >
-            <img
-                src={isLikedByMe ? '/Heart-full.png' : '/Heart.png'}
-                alt="좋아요"
+            <button
+              onClick={toggleComment}
+              className="flex items-center gap-[8px] text-base text-[14px]"
+            >
+              <img
+                src="/Comment.png"
+                alt="댓글"
                 width={30}
                 height={30}
-            />
-            {likes}
-          </button>
+              />
+              <span>{commentCount}</span>
+            </button>
+          </div>
+
+          <div className="text-[16px] p-[10px] whitespace-pre-line break-all">
+            {post.post}
+          </div>
         </div>
 
-        <div className="text-[16px] p-[10px] whitespace-pre-line break-all">
-          {post.post}
-        </div>
-        <CommentSection postId={id as string} />
+        {isCommentOpen && (
+            <div className="w-1/2 border-l border-light flex flex-col h-screen">
+              <div
+                  className="flex items-center justify-between px-[20px] py-[16px] border-b border-light">
+                <h2 className="text-[18px] font-bold">댓글 {commentCount}</h2>
+                <button
+                    onClick={() => setIsCommentOpen(false)}
+                    className="p-[4px] hover:bg-snow rounded"
+                >
+                  <img src="/Close.png" alt="닫기" width={24} height={24}/>
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-hidden">
+                <CommentSection postId={id as string}/>
+              </div>
+            </div>
+        )}
       </div>
   );
 }

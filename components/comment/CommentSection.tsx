@@ -58,10 +58,6 @@ export default function CommentSection({ postId }: CommentSectionProps) {
       <div className="p-[10px]">
         {/* 댓글 목록 */}
         <div className="mb-[20px]">
-          <h3 className="text-[18px] font-bold mb-[12px]">
-            댓글 {comments.length}
-          </h3>
-
           {comments.length === 0 ? (
               <p className="text-middle text-center py-[40px]">
                 첫 댓글을 남겨보세요!
