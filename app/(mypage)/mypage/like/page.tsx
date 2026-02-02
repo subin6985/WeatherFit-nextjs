@@ -2,7 +2,7 @@
 
 import {useNavigationStore} from "../../../../store/useNavigationStore";
 import {useCallback, useEffect} from "react";
-import FeedGrid from "../../../../components/FeedGrid";
+import FeedGrid from "../../../../components/feed/FeedGrid";
 import {useRouter} from "next/navigation";
 import {useAuthStore} from "../../../../store/useAuthStore";
 import {getLikedPosts} from "../../../../lib/services/postService";

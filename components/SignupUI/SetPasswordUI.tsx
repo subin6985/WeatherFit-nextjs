@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Input from "../Input";
-import Button from "../Button";
+import Input from "../baseUI/Input";
+import Button from "../baseUI/Button";
 
 interface SetPasswordUIProps {
   password: string;

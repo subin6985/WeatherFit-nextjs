@@ -3,8 +3,8 @@
 import {useEffect, useState} from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../../store/useAuthStore"
-import Input from "../../../components/Input";
-import Button from "../../../components/Button";
+import Input from "../../../components/baseUI/Input";
+import Button from "../../../components/baseUI/Button";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -141,7 +141,7 @@ export default function LoginPage() {
                 className="w-[35px] h-auto"
             />
           </button>
-          {/* 카카오 로그인은 추후 구현 */}
+          {/* 카카오 로그인은 추후 구현
           <button disabled>
             <img
                 src="/Kakao.png"
@@ -151,6 +151,7 @@ export default function LoginPage() {
                 className="w-[35px] h-auto opacity-50"
             />
           </button>
+          */}
         </div>
 
         <button

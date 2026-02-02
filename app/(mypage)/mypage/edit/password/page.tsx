@@ -2,13 +2,13 @@
 
 import {useNavigationStore} from "../../../../../store/useNavigationStore";
 import {useEffect, useState} from "react";
-import SmallButton from "../../../../../components/SmallButton";
+import SmallButton from "../../../../../components/baseUI/SmallButton";
 import {useAuthStore} from "../../../../../store/useAuthStore";
 import {doc, getDoc} from "firebase/firestore";
 import {db} from "../../../../../lib/firebase";
 import {updateProfile} from "firebase/auth";
 import {useRouter} from "next/navigation";
-import Input from "../../../../../components/Input";
+import Input from "../../../../../components/baseUI/Input";
 
 export default function EditPasswordPage () {
   const { setCurrentPage } = useNavigationStore();

@@ -9,7 +9,7 @@ import {doc, getDoc, updateDoc} from "firebase/firestore";
 import {db, storage} from "../../../../lib/firebase";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 import {updateProfile} from "firebase/auth";
-import SmallButton from "../../../../components/SmallButton";
+import SmallButton from "../../../../components/baseUI/SmallButton";
 import ProfileButton from "../../../../components/ProfileButton";
 
 export default function EditInfoPage () {

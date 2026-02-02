@@ -25,6 +25,7 @@ import {
   writeBatch
 } from "firebase/firestore";
 import {deleteObject, ref} from "firebase/storage";
+import {deleteUserComments} from "../lib/services/commentService";
 
 interface AuthState {
   user: User | null;
@@ -296,6 +297,9 @@ export const useAuthStore = create<AuthState>()(
               });
               await batch.commit();
 
+              // 댓글 삭제
+              await deleteUserComments(userId);
+
               // 다른 사용자 게시물의 좋아요 기록에서 제거
               const likedPostsQuery = query(
                   collection(db, "posts"),
@@ -395,6 +399,8 @@ export const useAuthStore = create<AuthState>()(
                 batch.delete(doc.ref);
               });
               await batch.commit();
+
+              await deleteUserComments(userId);
 
               const likedPostsQuery = query(
                   collection(db, "posts"),

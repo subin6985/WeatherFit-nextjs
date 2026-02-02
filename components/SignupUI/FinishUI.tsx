@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { updateProfile } from "firebase/auth";
 import { useAuthStore } from "../../store/useAuthStore";
-import Input from "../Input";
-import Button from "../Button";
+import Input from "../baseUI/Input";
+import Button from "../baseUI/Button";
 import {db} from "../../lib/firebase";
 import {doc, setDoc} from "firebase/firestore";
 

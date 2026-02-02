@@ -23,6 +23,25 @@ export interface PostDetail extends BasePost {
   isLikedByMe: boolean;
 }
 
+export interface Comment {
+  id: string;
+  postId: string;
+  userId: string;
+  userName: string;
+  userPhoto: string;
+  content: string;
+  parentId: string | null; // null이면 원댓글, 값이 있으면 답댓글
+  depth: 0 | 1;            // 0: 원댓글, 1: 답댓글
+  replyCount: number;      // 답댓글 개수
+  createdAt: number;
+  isDeleted: boolean;
+  deletedAt?: number;
+}
+
+export interface CommentWithReplies extends Comment {
+  replies: Comment[];      // 답댓글 목록
+}
+
 export enum TempRange {
   BELOW_4 = "BELOW_4",
   FROM4_TO8 = "FROM4_TO8",

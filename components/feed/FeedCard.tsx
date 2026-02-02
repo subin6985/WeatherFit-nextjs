@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { PostSummary } from '../types';
+import { PostSummary } from '../../types';
 
 interface FeedCardProps {
   feed: PostSummary;

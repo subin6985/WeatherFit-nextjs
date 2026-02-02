@@ -6,7 +6,7 @@ import { REGIONS, getRegionCoords, TempRange } from "../../types";
 import { fetchWeatherForDate, tempRangeToString } from "../../lib/weatherUtils";
 import { createPost } from "../../lib/services/postService";
 import { useAuthStore } from "../../store/useAuthStore";
-import SmallButton from "../SmallButton";
+import SmallButton from "../baseUI/SmallButton";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 

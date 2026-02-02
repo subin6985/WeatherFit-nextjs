@@ -6,8 +6,8 @@ import {useEffect, useState} from "react";
 import {updateProfile} from "firebase/auth";
 import {doc, updateDoc} from "firebase/firestore";
 import {db} from "../../../../lib/firebase";
-import Input from "../../../../components/Input";
-import Button from "../../../../components/Button";
+import Input from "../../../../components/baseUI/Input";
+import Button from "../../../../components/baseUI/Button";
 
 export default function FinishGooglePage() {
   const router = useRouter();

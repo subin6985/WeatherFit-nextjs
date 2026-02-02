@@ -1,7 +1,7 @@
 "use client";
 
 import {useRef, useState} from "react";
-import SmallButton from "../SmallButton";
+import SmallButton from "../baseUI/SmallButton";
 
 interface StepOneUIProps {
   file: File | null;

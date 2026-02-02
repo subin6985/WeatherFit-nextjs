@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import {useEffect, useState} from "react";
 import { httpsCallable } from "firebase/functions";
-import Input from "../Input";
-import SmallButton from "../SmallButton";
-import Button from "../Button";
+import Input from "../baseUI/Input";
+import SmallButton from "../baseUI/SmallButton";
+import Button from "../baseUI/Button";
 import {functions} from "../../lib/firebase";
 import {useAuthStore} from "../../store/useAuthStore";
 

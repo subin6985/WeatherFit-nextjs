@@ -7,6 +7,7 @@ import { PostDetail } from '../../../../types';
 import {deletePost, getPostById, subscribeLikes, toggleLike} from '../../../../lib/services/postService';
 import { useAuthStore } from "../../../../store/useAuthStore";
 import {useNavigationStore} from "../../../../store/useNavigationStore";
+import CommentSection from "../../../../components/comment/CommentSection";
 
 export default function PostPage() {
   const { id } = useParams();
@@ -245,6 +246,7 @@ export default function PostPage() {
         <div className="text-[16px] p-[10px] whitespace-pre-line break-all">
           {post.post}
         </div>
+        <CommentSection postId={id as string} />
       </div>
   );
 }

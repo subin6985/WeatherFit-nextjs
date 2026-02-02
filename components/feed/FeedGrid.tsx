@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { DocumentSnapshot } from 'firebase/firestore';
 import FeedCard from './FeedCard';
-import GenderFilter from './filter/GenderFilter';
-import TempFilter from './filter/TempFilter';
-import { Gender, PostSummary, TempRange } from '../types';
+import GenderFilter from '../filter/GenderFilter';
+import TempFilter from '../filter/TempFilter';
+import { Gender, PostSummary, TempRange } from '../../types';
 
 interface FeedGridProps {
   title?: string;

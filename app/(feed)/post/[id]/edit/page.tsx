@@ -6,7 +6,7 @@ import { REGIONS, getRegionCoords, TempRange } from "../../../../../types";
 import { fetchWeatherForDate, tempRangeToString } from "../../../../../lib/weatherUtils";
 import { updatePost } from "../../../../../lib/services/postService";
 import { useAuthStore } from "../../../../../store/useAuthStore";
-import SmallButton from "../../../../../components/SmallButton";
+import SmallButton from "../../../../../components/baseUI/SmallButton";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../../../../lib/firebase";
 
