@@ -67,7 +67,6 @@ export default function DeleteAccountPage() {
             <li>• 모든 게시물이 삭제됩니다.</li>
             <li>• 프로필 정보가 삭제됩니다.</li>
             <li>• 좋아요 기록이 삭제됩니다.</li>
-            <li>• 작성한 댓글은 삭제되지 않습니다.</li>
             <li>• 삭제된 데이터는 복구할 수 없습니다.</li>
           </ul>
         </div>

@@ -47,6 +47,7 @@ export default function CommentItem({ comment, postId, onUpdate }: CommentItemPr
       );
       setReplyInput('');
       setShowReplyInput(false);
+      setIsReplyOpen(true);
       await onUpdate();
     } catch (error) {
       console.error('답댓글 작성 실패:', error);
