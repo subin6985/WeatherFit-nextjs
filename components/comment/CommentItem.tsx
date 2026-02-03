@@ -26,7 +26,11 @@ export default function CommentItem({ comment, postId, onUpdate }: CommentItemPr
     if (diff < 60000) return '방금 전';
     if (diff < 3600000) return `${Math.floor(diff / 60000)}분 전`;
     if (diff < 86400000) return `${Math.floor(diff / 3600000)}시간 전`;
-    return `${date.getMonth() + 1}/${date.getDate()}`;
+
+    const yy = String(date.getFullYear()).slice(2);
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yy}/${mm}/${dd}`;
   };
 
   const handleReplySubmit = async () => {
@@ -43,7 +47,8 @@ export default function CommentItem({ comment, postId, onUpdate }: CommentItemPr
         user.uid,
         user.displayName || '익명',
         user.photoURL || '',
-        replyInput
+        replyInput,
+        comment.userId
       );
       setReplyInput('');
       setShowReplyInput(false);

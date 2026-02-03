@@ -6,6 +6,7 @@ import Ratio from "./Ratio";
 import {useAuthStore} from "../store/useAuthStore";
 import {auth} from "../lib/firebase";
 import {useNavigationStore} from "../store/useNavigationStore";
+import NotificationBell from "./NotificationBell";
 
 type WeatherBackground = "bg-sunny" | "bg-cloudy" | "bg-snowy" | "bg-rainy";
 
@@ -135,9 +136,12 @@ export default function WeatherClient() {
               <img src="/User.png" alt="User" className="w-[40px] h-[40px] mb-[13px]" />
             </button>
             {isLoggedIn && (
-                <button onClick={handleLogoutButton}>
-                  <img src="/Logout.svg" alt="Logout" className="w-[40px] h-[40px]" />
-                </button>
+                <>
+                  <NotificationBell />
+                  <button onClick={handleLogoutButton}>
+                    <img src="/Logout.svg" alt="Logout" className="w-[40px] h-[40px]" />
+                  </button>
+                </>
             )}
           </div>
         </div>

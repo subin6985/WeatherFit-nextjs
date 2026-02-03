@@ -121,7 +121,7 @@ export default function PostPage() {
 
     try {
       setIsToggling(true);
-      await toggleLike(id as string, user.uid);
+      await toggleLike(id as string, user.uid, user.displayName, user.photoURL);
     } catch (e) {
       console.error('Failed to toggle like:', e);
       alert('좋아요 처리에 실패했습니다.');
@@ -298,7 +298,7 @@ export default function PostPage() {
               </div>
 
               <div className="flex-1 overflow-hidden">
-                <CommentSection postId={id as string}/>
+                <CommentSection postId={id as string} postAuthorId={post.member.memberId as string} />
               </div>
             </div>
         )}

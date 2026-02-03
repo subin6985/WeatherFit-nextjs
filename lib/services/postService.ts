@@ -21,6 +21,7 @@ import {
 import {auth, db, storage} from '../firebase';
 import { PostDetail, PostSummary, TempRange, Gender } from '../../types';
 import {ref, uploadBytes, getDownloadURL, deleteObject} from 'firebase/storage';
+import {createNotification} from "./notificationService";
 
 export interface CreatePostData {
   file: File;
@@ -204,7 +205,12 @@ export const subscribeLikes = (
   return unsubscribe;
 };
 
-export const toggleLike = async (postId: string, userId: string) => {
+export const toggleLike = async (
+    postId: string,
+    userId: string,
+    userName: string,
+    userPhoto: string
+) => {
   try {
     const postRef = doc(db, 'posts', postId);
     const postDoc = await getDoc(postRef);
@@ -213,6 +219,7 @@ export const toggleLike = async (postId: string, userId: string) => {
       throw new Error('게시글을 찾을 수 없습니다.');
     }
 
+    const postData = postDoc.data();
     const likedBy = postDoc.data()?.likedBy || [];
     const isLiked = likedBy.includes(userId);
 
@@ -225,6 +232,17 @@ export const toggleLike = async (postId: string, userId: string) => {
       await updateDoc(postRef, {
         likes: increment(1),
         likedBy: arrayUnion(userId)
+      });
+
+      // 좋아요 알림 생성
+      await createNotification({
+        recipientId: postData.memberId,
+        senderId: userId,
+        senderName: userName,
+        senderPhoto: userPhoto,
+        type: 'like',
+        postId,
+        message: `${userName}님이 회원님의 게시물을 좋아합니다.`,
       });
     }
 

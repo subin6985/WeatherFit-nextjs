@@ -8,9 +8,10 @@ import CommentItem from './CommentItem';
 
 interface CommentSectionProps {
   postId: string;
+  postAuthorId: string;
 }
 
-export default function CommentSection({ postId }: CommentSectionProps) {
+export default function CommentSection({ postId, postAuthorId }: CommentSectionProps) {
   const { user } = useAuthStore();
   const [comments, setComments] = useState<CommentWithReplies[]>([]);
   const [input, setInput] = useState('');
@@ -42,7 +43,8 @@ export default function CommentSection({ postId }: CommentSectionProps) {
           user.uid,
           user.displayName || '익명',
           user.photoURL || '',
-          input
+          input,
+          postAuthorId
       );
       setInput('');
       await fetchComments();
