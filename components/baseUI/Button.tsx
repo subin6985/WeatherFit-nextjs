@@ -2,8 +2,10 @@
 
 interface ButtonProps {
   children: React.ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
   disabled?: boolean;
+  isForDelete?: boolean;
+  type?: "button" | "submit";
 }
 
 export default function Button({
@@ -11,10 +13,11 @@ export default function Button({
                                  onClick,
                                  disabled = false,
                                  isForDelete = false,
+                                 type = "button"
                                }: ButtonProps) {
   return (
       <button
-          type="button"
+          type={type}
           onClick={onClick}
           className={`w-[250px] h-[43px] rounded-full
                  justify-center items-center

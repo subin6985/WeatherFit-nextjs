@@ -103,33 +103,35 @@ export default function LoginPage() {
           />
         </button>
 
-        <div className="mb-[17px]">
-          <Input
-              placeholder="이메일"
-              value={email}
-              onChange={setEmail}
-              error={error}
-          />
-        </div>
+        <form onSubmit={handleLogin}>
+          <div className="mb-[17px]">
+            <Input
+                placeholder="이메일"
+                value={email}
+                onChange={setEmail}
+                error={error}
+            />
+          </div>
 
-        <div className="relative flex flex-col items-center mb-[29px]">
-          <Input
-              type="password"
-              placeholder="비밀번호"
-              value={password}
-              onChange={setPassword}
-              error={error}
-          />
-          {error && (
-              <div className="absolute text-[12px] text-warning left-3 top-12">
-                이메일과 비밀번호를 다시 확인해 주세요!
-              </div>
-          )}
-        </div>
+          <div className="relative flex flex-col items-center mb-[29px]">
+            <Input
+                type="password"
+                placeholder="비밀번호"
+                value={password}
+                onChange={setPassword}
+                error={error}
+            />
+            {error && (
+                <div className="absolute text-[12px] text-warning left-3 top-12">
+                  이메일과 비밀번호를 다시 확인해 주세요!
+                </div>
+            )}
+          </div>
 
-        <Button disabled={loading} onClick={handleLogin}>
-          {loading ? "로그인 중..." : "로그인"}
-        </Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "로그인 중..." : "로그인"}
+          </Button>
+        </form>
 
         <div className="mt-[17px] flex flex-row justify-center gap-[25px]">
           <button onClick={handleGoogleLogin} disabled={loading}>
