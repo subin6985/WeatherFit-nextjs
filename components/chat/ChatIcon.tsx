@@ -22,7 +22,7 @@ export default function ChatIcon({onClick}) {
   }, [user]);
 
   return (
-      <div className="relative mb-[13px]">
+      <div className="relative">
         <button onClick={onClick}>
           <img src="/Chat.png" alt="Chat" className="w-[35px] h-[35px] mb-[13px]"/>
           {unreadCount > 0 && (
