@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useAuthStore } from "../../store/useAuthStore";
 import { getOrCreateChatRoom } from "../../lib/services/chatService";
-import Button from "../baseUI/Button";
 import {useChatStore} from "../../store/useChatStore";
+import SmallButton from "../baseUI/SmallButton";
 
 interface ChatButtonProps {
   otherUserId: string;
@@ -49,8 +49,8 @@ export default function ChatButton({ otherUserId, otherUserName, otherUserPhoto 
   };
 
   return (
-      <Button onClick={handleStartChat} disabled={loading}>
+      <SmallButton onClick={handleStartChat} disabled={loading}>
         {loading ? '로딩 중...' : '1:1 채팅'}
-      </Button>
+      </SmallButton>
   );
 }

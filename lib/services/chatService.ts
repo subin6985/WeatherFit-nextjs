@@ -7,7 +7,7 @@ import {
   onSnapshot,
   getDocs,
   doc,
-  updateDoc,
+  updateDoc, getDoc, increment,
 } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -127,11 +127,18 @@ export const saveMessage = async (
 
   await addDoc(messagesRef, messageData);
 
-  // 채팅방의 lastMessage 업데이트
   const roomRef = doc(db, 'chatRooms', roomId);
+  const roomDoc = await getDoc(roomRef);
+  const roomData = roomDoc.data();
+
+  // 상대방 찾기
+  const otherUserId = roomData.participants.find(id => id !== senderId);
+
+  // 채팅방의 lastMessage 업데이트
   await updateDoc(roomRef, {
     lastMessage: message,
     lastMessageTime: Date.now(),
+    [`unreadCount.${otherUserId}`]: increment(1), // 상대방의 unreadCount 증가
   });
 
   return messageData;
@@ -175,5 +182,11 @@ export const markMessagesAsRead = async (
     updateDoc(doc.ref, { isRead: true })
   );
 
-  return Promise.all(updatePromises);
-}
+  await Promise.all(updatePromises);
+
+  // unreadCount 초기화
+  const roomRef = doc(db, 'chatRooms', roomId);
+  await updateDoc(roomRef, {
+    [`unreadCount.${userId}`]: 0
+  });
+};

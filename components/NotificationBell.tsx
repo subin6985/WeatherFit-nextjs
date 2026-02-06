@@ -50,7 +50,7 @@ export default function NotificationBell() {
         >
           <img src="/Bell.png" alt="알림" width={40} height={40} />
           {unreadCount > 0 && (
-              <span className="absolute top-0 right-0 bg-warning text-snow text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-warning text-snow text-xs rounded-full w-5 h-5 flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
           )}

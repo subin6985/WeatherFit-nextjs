@@ -240,7 +240,7 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
                                     : 'bg-gray-100 text-base'
                             }`}
                         >
-                          <p className="whitespace-pre-wrap break-words">
+                          <p className="whitespace-pre-wrap break-words text-center">
                             {msg.message}
                           </p>
                         </div>

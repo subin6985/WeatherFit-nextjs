@@ -10,6 +10,7 @@ import {useNavigationStore} from "../../../../store/useNavigationStore";
 import CommentSection from "../../../../components/comment/CommentSection";
 import {subscribeCommentCount} from "../../../../lib/services/commentService";
 import {useCommentStore} from "../../../../store/useCommentStore";
+import ChatButton from "../../../../components/chat/ChatButton";
 
 export default function PostPage() {
   const { id } = useParams();
@@ -205,7 +206,7 @@ export default function PostPage() {
               </div>
             </div>
             {
-              (post.member.memberId === user?.uid) && (
+              (post.member.memberId === user?.uid) ? (
                   <div className="flex justify-end" ref={menuRef}>
                     <button onClick={() => setOpenMenu(prev => !prev)}>
                       <img
@@ -234,7 +235,13 @@ export default function PostPage() {
                         </div>
                     )}
                   </div>
-                )
+                ) : (
+                    <ChatButton
+                        otherUserId={post.member.memberId}
+                        otherUserName={post.member.nickname}
+                        otherUserPhoto={post.member.profilePhoto}
+                    />
+              )
             }
           </div>
 

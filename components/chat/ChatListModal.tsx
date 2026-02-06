@@ -95,7 +95,7 @@ export default function ChatListModal() {
 
                           {unreadCount > 0 && (
                               <div className="bg-warning text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                                {unreadCount}
+                                {unreadCount > 99 ? '99+' : unreadCount}
                               </div>
                           )}
                         </div>

@@ -8,6 +8,7 @@ import {auth} from "../lib/firebase";
 import {useNavigationStore} from "../store/useNavigationStore";
 import NotificationBell from "./NotificationBell";
 import {useChatStore} from "../store/useChatStore";
+import ChatIcon from "./chat/ChatIcon";
 
 type WeatherBackground = "bg-sunny" | "bg-cloudy" | "bg-snowy" | "bg-rainy";
 
@@ -111,7 +112,7 @@ export default function WeatherClient() {
   }
 
   return (
-      <div className="relative h-screen items-center">
+      <div className="relative h-screen flex flex-col justify-between">
         {/* 배경 이미지 + 오버레이 */}
         <div className={`absolute inset-0 ${bg} bg-cover bg-center`}>
           <div className="absolute inset-0 bg-black/30" />
@@ -140,9 +141,7 @@ export default function WeatherClient() {
             {isLoggedIn && (
                 <>
                   <NotificationBell />
-                  <button onClick={openChatList}>
-                    <img src="/Chat.png" alt="Chat" className="w-[40px] h-[40px] mb-[13px]" />
-                  </button>
+                  <ChatIcon onClick={openChatList} />
                   <button onClick={handleLogoutButton}>
                     <img src="/Logout.svg" alt="Logout" className="w-[40px] h-[40px]" />
                   </button>
@@ -151,7 +150,7 @@ export default function WeatherClient() {
           </div>
         </div>
 
-        <div className="relative mt-[200px] ml-[20px]">
+        <div className="relative ml-[20px]">
           <div className="text-snow text-[20px] font-bold">
             오늘 같은 날씨에 많이 입는 옷
           </div>
