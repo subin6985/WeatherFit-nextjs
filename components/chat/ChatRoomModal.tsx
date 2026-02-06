@@ -234,13 +234,13 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
                             </div>
                         )}
                         <div
-                            className={`px-4 py-2 rounded-2xl ${
+                            className={`inline-flex px-3 py-2 rounded-2xl ${
                                 isMyMessage
                                     ? 'bg-primary text-white'
                                     : 'bg-gray-100 text-base'
                             }`}
                         >
-                          <p className="whitespace-pre-wrap break-words text-center">
+                          <p className="whitespace-pre-wrap break-words">
                             {msg.message}
                           </p>
                         </div>
