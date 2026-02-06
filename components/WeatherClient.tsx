@@ -7,6 +7,7 @@ import {useAuthStore} from "../store/useAuthStore";
 import {auth} from "../lib/firebase";
 import {useNavigationStore} from "../store/useNavigationStore";
 import NotificationBell from "./NotificationBell";
+import {useChatStore} from "../store/useChatStore";
 
 type WeatherBackground = "bg-sunny" | "bg-cloudy" | "bg-snowy" | "bg-rainy";
 
@@ -16,6 +17,7 @@ export default function WeatherClient() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { user } = useAuthStore.getState();
   const { setCurrentPage } = useNavigationStore();
+  const { openChatList } = useChatStore();
 
   const [bg, setBg] = useState<WeatherBackground>("bg-sunny");
   const [currTemp, setCurrTemp] = useState(25);
@@ -138,6 +140,9 @@ export default function WeatherClient() {
             {isLoggedIn && (
                 <>
                   <NotificationBell />
+                  <button onClick={openChatList}>
+                    <img src="/Chat.png" alt="Chat" className="w-[40px] h-[40px] mb-[13px]" />
+                  </button>
                   <button onClick={handleLogoutButton}>
                     <img src="/Logout.svg" alt="Logout" className="w-[40px] h-[40px]" />
                   </button>
