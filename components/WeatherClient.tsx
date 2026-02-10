@@ -154,7 +154,7 @@ export default function WeatherClient() {
           <div className="text-snow text-[20px] font-bold">
             오늘 같은 날씨에 많이 입는 옷
           </div>
-          <Ratio />
+          <Ratio currentTemp={currTemp} />
         </div>
       </div>
   );

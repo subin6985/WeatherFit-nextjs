@@ -26,6 +26,7 @@ import {
 } from "firebase/firestore";
 import {deleteObject, ref} from "firebase/storage";
 import {deleteUserComments} from "../lib/services/commentService";
+import {updateClothingStats} from "../lib/services/clothingStatsService";
 
 interface AuthState {
   user: User | null;
@@ -280,11 +281,21 @@ export const useAuthStore = create<AuthState>()(
               );
               const postsSnapshot = await getDocs(postsQuery);
 
-              // Storage에서 게시물 이미지 삭제
+              // Storage에서 게시물 이미지 삭제 & 통계에서 제거
               for (const postDoc of postsSnapshot.docs) {
                 try {
                   const photoRef = ref(storage, `posts/${userId}/${postDoc.id}`);
                   await deleteObject(photoRef);
+
+                  const postData = postDoc.data();
+
+                  // 통계에서 제거
+                  await updateClothingStats(
+                      postData.tempRange,
+                      postData.gender,
+                      postData.aiAnalysis,
+                      'remove'
+                  );
                 } catch (error) {
                   console.log("이미지 삭제 실패:", error);
                 }
@@ -389,6 +400,16 @@ export const useAuthStore = create<AuthState>()(
                 try {
                   const photoRef = ref(storage, `posts/${userId}/${postDoc.id}`);
                   await deleteObject(photoRef);
+
+                  const postData = postDoc.data();
+
+                  // 통계에서 제거
+                  await updateClothingStats(
+                      postData.tempRange,
+                      postData.gender,
+                      postData.aiAnalysis,
+                      'remove'
+                  );
                 } catch (error) {
                   console.log("이미지 삭제 실패:", error);
                 }

@@ -1,4 +1,3 @@
-// lib/services/postService.ts
 import {
   collection,
   doc,
@@ -22,6 +21,8 @@ import {auth, db, storage} from '../firebase';
 import { PostDetail, PostSummary, TempRange, Gender } from '../../types';
 import {ref, uploadBytes, getDownloadURL, deleteObject} from 'firebase/storage';
 import {createNotification} from "./notificationService";
+import {analyzeClothing} from "./aiClothingService";
+import {updateClothingStats} from "./clothingStatsService";
 
 export interface CreatePostData {
   file: File;
@@ -46,11 +47,29 @@ export const createPost = async (data: CreatePostData): Promise<string> => {
   try {
     const { file, content, temp, tempRange, region, outfitDate, userId, gender } = data;
 
+    console.log('1. 이미지 업로드 시작...');
+    const storageRef = ref(storage, `posts/${userId}/${Date.now()}`);
+    await uploadBytes(storageRef, file);
+    const photoURL = await getDownloadURL(storageRef);
+    console.log('2. 이미지 업로드 완료:', photoURL);
+
+    // AI로 옷 분석
+    console.log('3. AI 분석 시작...');
+    const aiAnalysis = await analyzeClothing(photoURL);
+    console.log('4. AI 분석 결과:', aiAnalysis);
+
+    // 분석 실패 시 에러
+    if (!aiAnalysis.top || !aiAnalysis.bottom || aiAnalysis.confidence < 0.6) {
+      await deleteObject(storageRef);
+      throw new Error('이미지에서 옷을 인식할 수 없습니다.');
+    }
+
+    console.log('5. Firestore에 게시글 생성 시작...');
     const postsRef = collection(db, "posts");
     const docRef = await addDoc(postsRef, {
       memberId: userId,
       post: content,
-      photo: "",
+      photo: photoURL,
       temp,
       tempRange,
       region,
@@ -59,21 +78,22 @@ export const createPost = async (data: CreatePostData): Promise<string> => {
       likes: 0,
       likedBy: [],
       createdAt: Date.now(),
-    })
-
-    const storageRef = ref(storage, `posts/${userId}/${docRef.id}`);
-    await uploadBytes(storageRef, file);
-
-    const photoURL = await getDownloadURL(storageRef);
-
-    await updateDoc(doc(db, "posts", docRef.id), {
-      photo: photoURL,
+      aiAnalysis,
     });
+    console.log('6. 게시글 생성 완료:', docRef.id);
+
+    // 통계 업데이트
+    console.log('7. 통계 업데이트 시작...');
+    await updateClothingStats(tempRange, gender, aiAnalysis, 'add');
+    console.log('8. 통계 업데이트 완료');
 
     return docRef.id;
   } catch (error) {
     console.error("게시글 작성 실패:", error);
-    throw new Error("게시글 작성에 실패했습니다.");
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error(String(error));
   }
 };
 
@@ -260,6 +280,25 @@ export const toggleLike = async (
 export const updatePost = async (postId: string, data: UpdatePostData) => {
   try {
     const postRef = doc(db, "posts", postId);
+    const postDoc = await getDoc(postRef);
+    const oldData = postDoc.data();
+
+    // 온도 범위 변경 시
+    if (oldData.tempRange != data.tempRange) {
+      await updateClothingStats(
+          oldData.tempRange,
+          oldData.gender,
+          oldData.aiAnalysus,
+          'remove'
+      );
+
+      await updateClothingStats(
+          data.tempRange,
+          oldData.gender,
+          oldData.aiAnalysus,
+          'add'
+      );
+    }
 
     await updateDoc(postRef, {
       post: data.content,
@@ -275,14 +314,30 @@ export const updatePost = async (postId: string, data: UpdatePostData) => {
 
 export const deletePost = async (postId: string, userId: string) => {
   try {
+    const postDoc = await getDoc(doc(db, 'posts', postId));
+    const postData = postDoc.data();
+
+    if (!postData) throw new Error('게시물을 찾을 수 없습니다.');
+
+    // 통계에서 제거
+    await updateClothingStats(
+        postData.tempRange,
+        postData.gender,
+        postData.aiAnalysis,
+        'remove'
+    );
+
+    // 문서 삭제
     await deleteDoc(doc(db, "posts", postId));
 
+    // 이미지 삭제
     const photoRef = ref(storage, `posts/${userId}/${postId}`);
     await deleteObject(photoRef);
 
     return true;
   } catch(e) {
     console.log(e);
+    throw e;
   }
 }
 

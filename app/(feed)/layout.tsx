@@ -27,6 +27,11 @@ export default function FeedLayout({children}) {
       return;
     }
 
+    if (currentPage === 'feed') {
+      router.push('/');
+      return;
+    }
+
     // 기본 동작
     router.back();
   }

@@ -5,12 +5,22 @@ import {useEffect, useRef, useState} from "react";
 import {useAuthStore} from "../../../../store/useAuthStore";
 import {useRouter} from "next/navigation";
 import {Gender, GENDER_LABEL, GENDER_LIST, ProfileDetail} from "../../../../types";
-import {doc, getDoc, updateDoc} from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  writeBatch
+} from "firebase/firestore";
 import {db, storage} from "../../../../lib/firebase";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 import {updateProfile} from "firebase/auth";
 import SmallButton from "../../../../components/baseUI/SmallButton";
 import ProfileButton from "../../../../components/ProfileButton";
+import {recalculateStats} from "../../../../lib/services/clothingStatsService";
 
 export default function EditInfoPage () {
   const { user } = useAuthStore.getState();
@@ -24,7 +34,6 @@ export default function EditInfoPage () {
   const [profilePhotoURL, setProfilePhotoURL] = useState<String>("");
   const [nickname, setNickname] = useState<String>("");
   const [selectedGender, setSelectedGender] = useState<Gender>(Gender.NO_SELECT);
-  const [disable, setDisable] = useState(true);
 
   useEffect(() => {
     if (!user) return;
@@ -83,7 +92,6 @@ export default function EditInfoPage () {
 
       setFile(selectedFile);
       setProfilePhotoURL(URL.createObjectURL(selectedFile));
-      setDisable(false);
     }
   }
 
@@ -104,6 +112,26 @@ export default function EditInfoPage () {
         const locationRef = ref(storage, `avatars/${user?.uid}`);
         const result = await uploadBytes(locationRef, file);
         avatarUrl = await getDownloadURL(result.ref);
+      }
+
+      // 성별이 바뀐 경우
+      if (profile.gender != selectedGender) {
+        // 통계 재계산
+        await recalculateStats(user.uid, selectedGender);
+
+        // 모든 게시물의 gender 필드 업데이트
+        const postQuery = query(
+            collection(db, 'posts'),
+            where('userId', '==', user.uid)
+        );
+        const snapshot = await getDocs(postQuery);
+
+        const batch = writeBatch(db);
+        snapshot.docs.forEach(doc => {
+          batch.update(doc.ref, { gender: selectedGender });
+        });
+
+        await batch.commit();
       }
 
       const userDocRef = doc(db, "users", user?.uid);

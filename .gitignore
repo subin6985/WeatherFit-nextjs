@@ -15,6 +15,8 @@ firebase-debug.*.log*
 # Socket Server (별도 레포로 관리)
 socket-server/
 
+google-cloud-key.json
+
 # Uncomment this if you'd like others to create their own Firebase project.
 # For a team working on the same Firebase project(s), it is recommended to leave
 # it commented so all members can deploy to the same project(s) in .firebaserc.

@@ -115,6 +115,9 @@ export default function StepTwoUI({
 
     try {
       setSubmitting(true);
+      
+      // AI 분석 진행
+      alert('이미지를 분석하고 있습니다...');
 
       // 사용자 gender 정보 가져오기
       let gender = "NO_SELECT";
@@ -143,7 +146,15 @@ export default function StepTwoUI({
       router.push("/feed");
     } catch (error) {
       console.error("게시글 작성 실패:", error);
-      alert("게시글 작성에 실패했습니다.");
+
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.log('Error message:', errorMessage);
+
+      if (errorMessage.includes('인식할 수 없습니다' || 'AI 분석')) {
+        alert('이미지에서 옷을 정확히 인식할 수 없습니다.\n전신 사진을 사용해주세요.');
+      } else {
+        alert("게시글 작성에 실패했습니다.");
+      }
     } finally {
       setSubmitting(false);
     }

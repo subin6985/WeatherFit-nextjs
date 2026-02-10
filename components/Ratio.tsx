@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {tempToTempRange} from "../lib/weatherUtils";
+import {getClothingStats} from "../lib/services/clothingStatsService";
 
 type RatioItem = {
   category: string;
   ratio: number; // 0~1
 };
 
-type RatioResponse = {
+export type RatioResponse = {
   top: RatioItem[];
   bottom: RatioItem[];
 };
@@ -25,9 +27,9 @@ const MOCK_DATA: RatioResponse = {
 };
 
 // Mock 사용 여부 (true면 API 안 쓰고 더미만 사용)
-const USE_MOCK = true;
+const USE_MOCK = false;
 
-export default function Ratio() {
+export default function Ratio(currentTemp: number) {
   const [filter, setFilter] = useState<"all" | "female" | "male">("all");
   const [data, setData] = useState<RatioResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,14 +51,12 @@ export default function Ratio() {
     }
 
     try {
-      const res = await fetch(`/api/ratio?gender=${gender}`);
+      const tempRange = tempToTempRange(currentTemp);
 
-      if (!res.ok) throw new Error("Failed to fetch ratio data");
-
-      const json = await res.json();
-      setData(json);
+      const stats = await getClothingStats(tempRange, filter);
+      setData(stats);
     } catch (error) {
-      console.error("비율 데이터 로딩 실패:", error);
+      console.error("통계 로딩 실패:", error);
       // 에러 시 Mock 데이터 사용
       setData(MOCK_DATA);
     } finally {
@@ -97,11 +97,27 @@ export default function Ratio() {
     return <div className="text-snow mt-4">Loading...</div>;
   }
 
+  // 데이터가 비어있는 경우 처리
+  if (data.top.length === 0 || data.bottom.length === 0) {
+    return (
+        <div className="w-[353px] mt-2 text-snow">
+          <div className="flex flex-col items-center justify-center py-12">
+            <p className="text-center text-snow/80">
+              아직 이 온도에 해당하는<br />
+              게시물이 없습니다.
+            </p>
+          </div>
+        </div>
+    );
+  }
+
   const topMax = data.top.reduce((prev, cur) =>
-      cur.ratio > prev.ratio ? cur : prev
+      cur.ratio > prev.ratio ? cur : prev,
+      data.top[0]
   );
   const bottomMax = data.bottom.reduce((prev, cur) =>
-      cur.ratio > prev.ratio ? cur : prev
+      cur.ratio > prev.ratio ? cur : prev,
+      data.bottom[0]
   );
 
   return (
