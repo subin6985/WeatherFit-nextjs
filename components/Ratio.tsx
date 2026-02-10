@@ -133,37 +133,44 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
         </div>
 
         <div className="h-[180px] flex flex-col justify-center">
-          {(data.top.length === 0 || data.bottom.length === 0) ? (
+          {loading ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <p className="text-center text-snow/80">
+                  현재 날씨를 불러오는 중입니다.
+                </p>
+              </div>
+          ) :
+            (data.top.length === 0 || data.bottom.length === 0) ? (
             <div className="flex flex-col items-center justify-center py-12">
               <p className="text-center text-snow/80">
                 아직 이 온도에 해당하는<br />
                 게시물이 없습니다.
               </p>
             </div>
-        ) : (
-            <>
-              {/* 상의 */}
-              <div className="flex flex-row mb-[24px]">
-                <div className="text-[20px] font-semibold mr-[25px]">상의</div>
-                <div className="flex-col text-[20px]">
-                  {data.top.map((item) =>
-                      renderBar(item, item.category === topMax.category)
-                  )}
-                </div>
-              </div>
+            ) : (
+                <>
+                  {/* 상의 */}
+                    <div className="flex flex-row mb-[24px]">
+                      <div className="text-[20px] font-semibold mr-[25px]">상의</div>
+                      <div className="flex-col text-[20px]">
+                        {data.top.map((item) =>
+                            renderBar(item, item.category === topMax.category)
+                        )}
+                      </div>
+                    </div>
 
-              {/* 하의 */}
-              <div className="flex flex-row">
-                <div className="text-[20px] font-semibold mr-[25px]">하의</div>
-                <div className="flex-col text-[20px]">
-                  {data.bottom.map((item) =>
-                      renderBar(item, item.category === bottomMax.category)
-                  )}
-                </div>
-              </div>
-            </>
-          )
-        }
+                    {/* 하의 */}
+                    <div className="flex flex-row">
+                      <div className="text-[20px] font-semibold mr-[25px]">하의</div>
+                      <div className="flex-col text-[20px]">
+                        {data.bottom.map((item) =>
+                            renderBar(item, item.category === bottomMax.category)
+                        )}
+                      </div>
+                    </div>
+                  </>
+            )
+          }
         </div>
       </div>
   );

@@ -13,6 +13,11 @@ export default function MypageLayout({children}) {
   }, [currentPage]);
 
   const handleBackClick = () => {
+    if (currentPage === 'mypage') {
+      router.push('/');
+      return;
+    }
+
     router.back();
   }
 
