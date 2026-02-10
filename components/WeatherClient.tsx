@@ -24,6 +24,7 @@ export default function WeatherClient() {
   const [currTemp, setCurrTemp] = useState(25);
   const [avgTemp, setAvgTemp] = useState(25);
   const [avgWeather, setAvgWeather] = useState("맑음");
+  const [isLoading, setIsLoading] = useState(false);
 
   // 날씨를 배경으로 매핑
   const mapWeatherToBackground = (main: string): WeatherBackground => {
@@ -45,6 +46,8 @@ export default function WeatherClient() {
     }
 
     try {
+      setIsLoading(true);
+
       const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
       const res = await fetch(url);
 
@@ -69,6 +72,7 @@ export default function WeatherClient() {
 
       const mainWeather = data.current.weather[0].main;
       setBg(mapWeatherToBackground(mainWeather));
+      setIsLoading(false);
     } catch (error) {
       console.error("날씨 정보를 가져오는데 실패했습니다:", error);
       setBg("bg-cloudy");
@@ -154,7 +158,7 @@ export default function WeatherClient() {
           <div className="text-snow text-[20px] font-bold">
             오늘 같은 날씨에 많이 입는 옷
           </div>
-          <Ratio currentTemp={currTemp} />
+          <Ratio loading={isLoading} currentTemp={currTemp} />
         </div>
       </div>
   );

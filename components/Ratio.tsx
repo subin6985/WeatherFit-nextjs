@@ -14,6 +14,11 @@ export type RatioResponse = {
   bottom: RatioItem[];
 };
 
+interface RatioProps {
+  loading: boolean;
+  currentTemp: number;
+}
+
 // 더미 데이터
 const MOCK_DATA: RatioResponse = {
   top: [
@@ -29,14 +34,16 @@ const MOCK_DATA: RatioResponse = {
 // Mock 사용 여부 (true면 API 안 쓰고 더미만 사용)
 const USE_MOCK = false;
 
-export default function Ratio(currentTemp: number) {
+export default function Ratio({loading, currentTemp}: RatioProps) {
   const [filter, setFilter] = useState<"all" | "female" | "male">("all");
   const [data, setData] = useState<RatioResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (loading) return;
+
     fetchRatioData(filter);
-  }, [filter]);
+  }, [loading, filter, currentTemp]);
 
   const fetchRatioData = async (gender: string) => {
     setIsLoading(true);
@@ -69,16 +76,16 @@ export default function Ratio(currentTemp: number) {
           className="flex items-center w-[285px] text-snow mb-2"
           key={item.category}
       >
-      <span
-          className={`w-[70px] ${
-              active ? "text-point font-semibold" : "text-snow"
-          }`}
-      >
-        {item.category}
-      </span>
+        <span
+            className={`w-[90px] ${
+                active ? "text-point font-semibold" : "text-snow"
+            }`}
+        >
+          {item.category}
+        </span>
 
         {/* Bar */}
-        <div className="flex-1 mx-[25px]">
+        <div className="flex-1 mx-[10px]">
           <div
               className={`h-[6px] rounded-full ${
                   active ? "bg-point" : "bg-snow"
@@ -88,27 +95,13 @@ export default function Ratio(currentTemp: number) {
         </div>
 
         <span className={active ? "text-point font-semibold" : "text-snow"}>
-        {Math.round(item.ratio * 100)}%
-      </span>
+          {Math.round(item.ratio * 100)}%
+        </span>
       </div>
   );
 
   if (isLoading || !data) {
     return <div className="text-snow mt-4">Loading...</div>;
-  }
-
-  // 데이터가 비어있는 경우 처리
-  if (data.top.length === 0 || data.bottom.length === 0) {
-    return (
-        <div className="w-[353px] mt-2 text-snow">
-          <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-center text-snow/80">
-              아직 이 온도에 해당하는<br />
-              게시물이 없습니다.
-            </p>
-          </div>
-        </div>
-    );
   }
 
   const topMax = data.top.reduce((prev, cur) =>
@@ -121,7 +114,7 @@ export default function Ratio(currentTemp: number) {
   );
 
   return (
-      <div className="w-[353px] mt-2 text-snow">
+      <div className="w-[353px] my-3 text-snow">
         {/* 필터 버튼 */}
         <div className="flex bg-snow/30 rounded-full p-1 mb-4">
           {(["all", "female", "male"] as const).map((g) => (
@@ -139,24 +132,38 @@ export default function Ratio(currentTemp: number) {
           ))}
         </div>
 
-        {/* 상의 */}
-        <div className="flex flex-row mb-[24px]">
-          <div className="text-[20px] font-semibold mr-[25px]">상의</div>
-          <div className="flex-col text-[20px]">
-            {data.top.map((item) =>
-                renderBar(item, item.category === topMax.category)
-            )}
-          </div>
-        </div>
+        <div className="h-[180px] flex flex-col justify-center">
+          {(data.top.length === 0 || data.bottom.length === 0) ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <p className="text-center text-snow/80">
+                아직 이 온도에 해당하는<br />
+                게시물이 없습니다.
+              </p>
+            </div>
+        ) : (
+            <>
+              {/* 상의 */}
+              <div className="flex flex-row mb-[24px]">
+                <div className="text-[20px] font-semibold mr-[25px]">상의</div>
+                <div className="flex-col text-[20px]">
+                  {data.top.map((item) =>
+                      renderBar(item, item.category === topMax.category)
+                  )}
+                </div>
+              </div>
 
-        {/* 하의 */}
-        <div className="flex flex-row">
-          <div className="text-[20px] font-semibold mr-[25px]">하의</div>
-          <div className="flex-col text-[20px]">
-            {data.bottom.map((item) =>
-                renderBar(item, item.category === bottomMax.category)
-            )}
-          </div>
+              {/* 하의 */}
+              <div className="flex flex-row">
+                <div className="text-[20px] font-semibold mr-[25px]">하의</div>
+                <div className="flex-col text-[20px]">
+                  {data.bottom.map((item) =>
+                      renderBar(item, item.category === bottomMax.category)
+                  )}
+                </div>
+              </div>
+            </>
+          )
+        }
         </div>
       </div>
   );
