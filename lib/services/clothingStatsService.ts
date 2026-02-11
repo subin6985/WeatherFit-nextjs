@@ -5,7 +5,7 @@ import {
   collection,
   doc,
   getDoc,
-  getDocs, increment,
+  getDocs, increment, onSnapshot,
   query,
   setDoc,
   updateDoc,
@@ -118,11 +118,11 @@ export const getClothingStats = async (
 }
 
 // 사용자 성별 변경 시 통계 재계산
-export const recalculateStats = async (userId: string, newGender: Gender) => {
+export const recalculateStats = async (userId: string, oldGender: string, newGender: string) => {
   try {
     const postQuery = query(
         collection(db, 'posts'),
-        where('userId', '==', userId)
+        where('memberId', '==', userId)
     );
     const postSnapshot = await getDocs(postQuery);
 
@@ -134,7 +134,7 @@ export const recalculateStats = async (userId: string, newGender: Gender) => {
       // 이전 성별을 통계에서 제거
       await updateClothingStats(
           postData.tempRange,
-          postData.gender, // 업데이트 이전 성별
+          oldGender,
           postData.aiAnalysis,
           'remove'
       );
@@ -153,4 +153,51 @@ export const recalculateStats = async (userId: string, newGender: Gender) => {
     console.error('통계 재계산 실패:', error);
     throw error;
   }
+}
+
+// 실시간 구독 함수
+export const subscribeClothingStats = (
+    tempRange: TempRange,
+    gender: 'all' | 'female' | 'male',
+    callback: (stats: RatioResponse) => void
+) => {
+  const statsRef = doc(db, 'clothingStats', tempRange);
+
+  return onSnapshot(statsRef, (snapshot) => {
+    if (!snapshot.exists()) {
+      callback({ top: [], bottom: [] });
+      return;
+    }
+
+    const data = snapshot.data()?.[gender];
+
+    if (!data) {
+      callback({ top: [], bottom: [] });
+      return;
+    }
+
+    const topTotal = Object.values(data.top).reduce((sum: number, val: any) => sum + val, 0);
+    const bottomTotal = Object.values(data.bottom).reduce((sum: number, val: any) => sum + val, 0);
+
+    if (topTotal === 0 || bottomTotal === 0) {
+      callback({ top: [], bottom: [] });
+      return;
+    }
+
+    const top = Object.entries(data.top)
+        .filter(([_, count]: any) => count > 0)
+        .map(([category, count]: any) => ({
+          category,
+          ratio: count / topTotal
+        }));
+
+    const bottom = Object.entries(data.bottom)
+        .filter(([_, count]: any) => count > 0)
+        .map(([category, count]: any) => ({
+          category,
+          ratio: count / bottomTotal
+        }));
+
+    callback({ top, bottom });
+  })
 }

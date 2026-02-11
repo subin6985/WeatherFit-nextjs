@@ -101,7 +101,7 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
   );
 
   if (isLoading || !data) {
-    return <div className="text-snow mt-4">Loading...</div>;
+    return <div className="h-[200px] text-snow mt-4">Loading...</div>;
   }
 
   const topMax = data.top.reduce((prev, cur) =>
@@ -133,7 +133,7 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
         </div>
 
         <div className="h-[180px] flex flex-col justify-center">
-          {loading ? (
+          {(isLoading || !data || loading) ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <p className="text-center text-snow/80">
                   현재 날씨를 불러오는 중입니다.

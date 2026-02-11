@@ -115,16 +115,20 @@ export default function EditInfoPage () {
       }
 
       // 성별이 바뀐 경우
-      if (profile.gender != selectedGender) {
+      if (profile?.gender != selectedGender) {
+        console.log('성별 변경 감지:', profile?.gender, '→', selectedGender);
+
         // 통계 재계산
-        await recalculateStats(user.uid, selectedGender);
+        await recalculateStats(user.uid, profile?.gender || 'NO_SELECT', selectedGender);
 
         // 모든 게시물의 gender 필드 업데이트
         const postQuery = query(
             collection(db, 'posts'),
-            where('userId', '==', user.uid)
+            where('memberId', '==', user.uid)
         );
         const snapshot = await getDocs(postQuery);
+
+        console.log(`${snapshot.docs.length}개 게시물 gender 업데이트`);
 
         const batch = writeBatch(db);
         snapshot.docs.forEach(doc => {
@@ -132,6 +136,7 @@ export default function EditInfoPage () {
         });
 
         await batch.commit();
+        console.log('게시물 gender 업데이트 완료');
       }
 
       const userDocRef = doc(db, "users", user?.uid);

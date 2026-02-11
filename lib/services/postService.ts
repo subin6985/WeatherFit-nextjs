@@ -284,18 +284,18 @@ export const updatePost = async (postId: string, data: UpdatePostData) => {
     const oldData = postDoc.data();
 
     // 온도 범위 변경 시
-    if (oldData.tempRange != data.tempRange) {
+    if (oldData.tempRange !== data.tempRange && oldData.aiAnalysis) {
       await updateClothingStats(
           oldData.tempRange,
           oldData.gender,
-          oldData.aiAnalysus,
+          oldData.aiAnalysis,
           'remove'
       );
 
       await updateClothingStats(
           data.tempRange,
           oldData.gender,
-          oldData.aiAnalysus,
+          oldData.aiAnalysis,
           'add'
       );
     }
