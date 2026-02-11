@@ -12,7 +12,7 @@ export default function FeedPage() {
   const { setCurrentPage } = useNavigationStore();
 
   useEffect(() => {
-    setCurrentPage('feed');
+    setCurrentPage('normal');
   }, []);
 
   return (

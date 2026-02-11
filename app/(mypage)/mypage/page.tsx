@@ -39,7 +39,7 @@ export default function MyPage() {
   useEffect(() => {
     if (!user) return;
 
-    setCurrentPage('mypage');
+    setCurrentPage('normal');
   }, []);
 
   useEffect(() => {
@@ -77,14 +77,14 @@ export default function MyPage() {
       <div className="flex flex-col px-[45px] h-screen items-center">
         <div className="mt-[42px] mb-[24px]">
           {profile?.profilePhoto ? (
-              <img
-                width={145}
-                height={145}
-                src={profile?.profilePhoto}
-                className="rounded-full"
-              />
+              <div className="w-[145px] h-[145px] rounded-full overflow-hidden">
+                <img
+                    src={profile?.profilePhoto}
+                    className="w-full h-full object-cover"
+                />
+              </div>
           ) : (
-              <div className="w-[145px] h-[145px] rounded-full bg-light" />
+              <div className="w-[145px] h-[145px] rounded-full bg-light"/>
           )}
         </div>
         <div className="flex flex-col justify-center gap-0 mb-[32px]">

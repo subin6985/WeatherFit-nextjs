@@ -151,7 +151,8 @@ export default function EditInfoPage () {
       })
 
       alert("프로필이 업데이트 되었습니다.");
-      router.push("/mypage");
+
+      router.replace("/mypage");
     } catch (err) {
       alert("프로필 업데이트에 실패했습니다.");
       console.log("Fail to update profile:", err);
@@ -182,12 +183,12 @@ export default function EditInfoPage () {
         </div>
         <div onClick={handleImageClick} className="group relative flex flex-col mt-[42px] mb-[24px] cursor-pointer">
           {profilePhotoURL ? (
-              <img
-                  width={145}
-                  height={145}
-                  src={profilePhotoURL}
-                  className="rounded-full"
-              />
+              <div className="w-[145px] h-[145px] rounded-full overflow-hidden">
+                <img
+                    src={profilePhotoURL}
+                    className="w-full h-full object-cover"
+                />
+              </div>
           ) : (
               <div className="w-[145px] h-[145px] rounded-full bg-light"/>
           )}

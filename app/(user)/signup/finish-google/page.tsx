@@ -48,7 +48,7 @@ export default function FinishGooglePage() {
       });
 
       // 홈으로 이동
-      router.push("/");
+      router.replace("/");
     } catch (err: any) {
       console.error("닉네임 설정 실패:", err);
       setError("닉네임 설정에 실패했습니다. 다시 시도해주세요.");

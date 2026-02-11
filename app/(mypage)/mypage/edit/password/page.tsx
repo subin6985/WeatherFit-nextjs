@@ -103,7 +103,7 @@ export default function EditPasswordPage () {
       setLoading(true);
       await changePassword(currentPassword, newPassword);
       alert("비밀번호가 성공적으로 변경되었습니다.");
-      router.push("/mypage");
+      router.replace("/mypage");
     } catch (error: any) {
       if (error.code === 'auth/wrong-password') {
 

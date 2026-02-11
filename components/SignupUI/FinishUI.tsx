@@ -56,7 +56,7 @@ export default function FinishUI({
       });
 
       // 성공 → 로그인 화면으로
-      router.push("/login");
+      router.replace("/login");
     } catch (err: any) {
       console.error("회원가입 실패:", err);
 

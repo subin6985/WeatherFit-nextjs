@@ -245,7 +245,7 @@ export default function PostPage() {
             }
           </div>
 
-          <div className="fle overflow-y-auto">
+          <div className="flex overflow-y-auto">
             {post.photo ? (
                 <img
                     src={post.photo}

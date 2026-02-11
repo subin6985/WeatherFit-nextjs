@@ -32,7 +32,7 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.push("/");
+      router.replace("/");
     } catch (e) {
       console.error("로그인 실패: ", e);
       setError(true);
@@ -52,7 +52,7 @@ export default function LoginPage() {
       if (isNewUser) {
         router.push("/signup/finish-google");
       } else {
-        router.push("/");
+        router.replace("/");
       }
     } catch (e) {
       console.error("Google 로그인 실패: ", e);

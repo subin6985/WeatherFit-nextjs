@@ -131,7 +131,7 @@ export default function StepTwoUI({
         console.error("사용자 정보 가져오기 실패:", err);
       }
 
-      await createPost({
+      const postId = await createPost({
         file,
         content,
         temp: weatherInfo.temp,
@@ -143,7 +143,8 @@ export default function StepTwoUI({
       });
 
       alert("게시글이 작성되었습니다!");
-      router.push("/feed");
+
+      router.replace(`/post/${postId}`);
     } catch (error) {
       console.error("게시글 작성 실패:", error);
 

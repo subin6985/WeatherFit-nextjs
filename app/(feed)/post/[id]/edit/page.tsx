@@ -160,7 +160,8 @@ export default function EditPage() {
       });
 
       alert("게시글이 수정되었습니다!");
-      router.push(`/post/${id}`);
+
+      router.replace(`/post/${id}`);
     } catch (error) {
       console.error("게시글 작성 실패:", error);
       alert("게시글 작성에 실패했습니다.");

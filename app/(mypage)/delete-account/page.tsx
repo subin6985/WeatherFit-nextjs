@@ -45,7 +45,8 @@ export default function DeleteAccountPage() {
       }
 
       alert("회원 탈퇴가 완료되었습니다.");
-      router.push("/");
+
+      router.replace("/");
     } catch (error: any) {
       alert(error.message || "회원 탈퇴에 실패했습니다.");
     } finally {

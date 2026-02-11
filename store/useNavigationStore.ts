@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-type Page = 'normal' | 'write' | 'feed' | 'mypage';
+type Page = 'normal' | 'write';
 
 interface NavigationStore {
   currentPage: Page;
