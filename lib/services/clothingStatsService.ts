@@ -40,34 +40,62 @@ export const updateClothingStats = async (
     });
   }
 
-  const increment_val = action === 'add' ? 1 : -1;
   const genderKey = gender === 'FEMALE' ? 'female' : gender === 'MALE' ? 'male' : 'all';
 
   // remove 시 음수 방지
   if (action === 'remove') {
     const currentStats = statsDoc.data();
-    const currentTopCount = currentStats?.[genderKey]?.top?.[aiAnalysis.top] || 0;
-    const currentBottomCount = currentStats?.[genderKey]?.bottom?.[aiAnalysis.bottom] || 0;
-    const currentAllTopCount = currentStats?.all?.top?.[aiAnalysis.top] || 0;
-    const currentAllBottomCount = currentStats?.all?.bottom?.[aiAnalysis.bottom] || 0;
 
-    // 이미 0이면 감소하지 않음
-    if (currentTopCount === 0 || currentBottomCount === 0 ||
-        currentAllTopCount === 0 || currentAllBottomCount === 0) {
-      console.warn('통계가 이미 0입니다. 감소하지 않습니다.');
-      return;
+    // 업데이트 할 필드 (기존에 0이 아닌 필드)
+    const updateData: any = {};
+
+    const currentAllTopCount = currentStats.all?.top?.[aiAnalysis.top] || 0;
+    if (currentAllTopCount > 0) {
+      updateData[`all.top.${aiAnalysis.top}`] = increment(-1);
+    } else {
+      console.warn(`all.top.${aiAnalysis.top}가 이미 0입니다.`);
     }
+
+    const currentAllBottomCount = currentStats?.all?.bottom?.[aiAnalysis.bottom] || 0;
+    if (currentAllBottomCount > 0) {
+      updateData[`all.bottom.${aiAnalysis.bottom}`] = increment(-1);
+    } else {
+      console.warn(`all.bottom.${aiAnalysis.bottom}가 이미 0입니다.`);
+    }
+
+    const currentTopCount = currentStats?.[genderKey]?.top?.[aiAnalysis.top] || 0;
+    if (currentTopCount > 0) {
+      updateData[`${genderKey}.top.${aiAnalysis.top}`] = increment(-1);
+    } else {
+      console.warn(`${genderKey}.top.${aiAnalysis.top}가 이미 0입니다.`);
+    }
+
+    const currentBottomCount = currentStats?.[genderKey]?.bottom?.[aiAnalysis.bottom] || 0;
+    if (currentBottomCount > 0) {
+      updateData[`${genderKey}.bottom.${aiAnalysis.bottom}`] = increment(-1);
+    } else {
+      console.warn(`${genderKey}.bottom.${aiAnalysis.bottom}가 이미 0입니다.`);
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await updateDoc(statsRef, updateData);
+      console.log('통계 감소 완료:', updateData);
+    } else {
+      console.warn('모든 필드가 이미 0이어서 통계 업데이트 건너뜀');
+    }
+  } else {
+    // add
+    await updateDoc(statsRef, {
+      // 전체 통계
+      [`all.top.${aiAnalysis.top}`]: increment(1),
+      [`all.bottom.${aiAnalysis.bottom}`]: increment(1),
+
+      // 성별 통계
+      [`${genderKey}.top.${aiAnalysis.top}`]: increment(1),
+      [`${genderKey}.bottom.${aiAnalysis.bottom}`]: increment(1),
+    });
+    console.log('통계 증가 완료');
   }
-
-  await updateDoc(statsRef, {
-    // 전체 통계
-    [`all.top.${aiAnalysis.top}`]: increment(increment_val),
-    [`all.bottom.${aiAnalysis.bottom}`]: increment(increment_val),
-
-    // 성별 통계
-    [`${genderKey}.top.${aiAnalysis.top}`]: increment(increment_val),
-    [`${genderKey}.bottom.${aiAnalysis.bottom}`]: increment(increment_val),
-  });
 };
 
 // 통계 가져오기

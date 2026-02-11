@@ -23,7 +23,7 @@ export default function DeleteAccountPage() {
       return;
     }
 
-    if (!password) {
+    if (!isGoogleUser && !password) {
       alert("비밀번호를 입력해주세요.");
       return;
     }
@@ -64,24 +64,27 @@ export default function DeleteAccountPage() {
             ⚠️ 주의사항
           </p>
           <ul className="text-[12px] text-red-600 space-y-[4px]">
-            <li>• 모든 게시물이 삭제됩니다.</li>
+            <li>• 모든 게시물과 댓글이 삭제됩니다.</li>
             <li>• 프로필 정보가 삭제됩니다.</li>
             <li>• 좋아요 기록이 삭제됩니다.</li>
             <li>• 삭제된 데이터는 복구할 수 없습니다.</li>
           </ul>
         </div>
 
-        <div className="mb-[16px]">
-          <label className="text-base text-[16px] mb-[5px] ml-[18px]">
-            비밀번호 확인
-          </label>
-          <Input
-              type="password"
-              value={password}
-              onChange={setPassword}
-              placeholder="현재 비밀번호"
-          />
-        </div>
+        {isGoogleUser ? null : (
+            <div className="mb-[16px]">
+              <label className="text-base text-[16px] mb-[5px] ml-[18px]">
+                비밀번호 확인
+              </label>
+              <Input
+                  type="password"
+                  value={password}
+                  onChange={setPassword}
+                  placeholder="현재 비밀번호"
+              />
+            </div>
+          )
+        }
 
         <div className="mb-[24px]">
           <label className="text-base text-[16px] mb-[5px] ml-[18px]">

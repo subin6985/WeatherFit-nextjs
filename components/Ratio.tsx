@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {tempToTempRange} from "../lib/weatherUtils";
-import {getClothingStats} from "../lib/services/clothingStatsService";
+import {getClothingStats, subscribeClothingStats} from "../lib/services/clothingStatsService";
 
 type RatioItem = {
   category: string;
@@ -42,12 +42,6 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
   useEffect(() => {
     if (loading) return;
 
-    fetchRatioData(filter);
-  }, [loading, filter, currentTemp]);
-
-  const fetchRatioData = async (gender: string) => {
-    setIsLoading(true);
-
     if (USE_MOCK) {
       // Mock 데이터 사용 시 약간의 딜레이로 실제 API 느낌 연출
       setTimeout(() => {
@@ -57,19 +51,15 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
       return;
     }
 
-    try {
-      const tempRange = tempToTempRange(currentTemp);
+    const tempRange = tempToTempRange(currentTemp);
 
-      const stats = await getClothingStats(tempRange, filter);
-      setData(stats);
-    } catch (error) {
-      console.error("통계 로딩 실패:", error);
-      // 에러 시 Mock 데이터 사용
-      setData(MOCK_DATA);
-    } finally {
+    const unsubscribe = subscribeClothingStats(tempRange, filter, (newStats) => {
+      setData(newStats)
       setIsLoading(false);
-    }
-  };
+    });
+
+    return () => unsubscribe();
+  }, [loading, filter, currentTemp]);
 
   const renderBar = (item: RatioItem, active: boolean) => (
       <div
