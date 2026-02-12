@@ -8,6 +8,7 @@ import Input from "../baseUI/Input";
 import Button from "../baseUI/Button";
 import {db} from "../../lib/firebase";
 import {doc, setDoc} from "firebase/firestore";
+import {Gender, GENDER_LABEL, GENDER_LIST} from "../../types";
 
 interface FinishUIProps {
   email: string;
@@ -27,6 +28,7 @@ export default function FinishUI({
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedGender, setSelectedGender] = useState<Gender>(Gender.NO_SELECT);
 
   const handleSignup = async () => {
     if (!nickname.trim()) return;
@@ -52,7 +54,7 @@ export default function FinishUI({
         email: user.email,
         profilePhoto: '',
         createdAt: Date.now(),
-        gender: "NO_SELECT"
+        gender: selectedGender
       });
 
       // 성공 → 로그인 화면으로
@@ -78,7 +80,7 @@ export default function FinishUI({
         <div className="mb-[17px]">
           <div className="text-base text-[16px] mb-[5px] ml-[18px]">닉네임</div>
           <div className="flex flex-row justify-between gap-[10px]">
-            <Input type="nickname" value={nickname} onChange={setNickname} />
+            <Input type="nickname" value={nickname} onChange={setNickname}/>
           </div>
         </div>
 
@@ -87,6 +89,34 @@ export default function FinishUI({
               {error}
             </div>
         )}
+
+        <div className="flex flex-col gap-[14px] mt-[10px] mb-[50px]">
+          <div className="text-[16px] items-center ml-[18px]">성별</div>
+          <div className="flex items-center gap-[25px]">
+            {GENDER_LIST.map((gender) => (
+                <label
+                    key={gender}
+                    className="flex items-center gap-[5px] cursor-pointer"
+                >
+                  <div className="relative h-5">
+                    <input
+                        type="radio"
+                        name="gender"
+                        value={gender}
+                        checked={selectedGender === gender}
+                        onChange={() => setSelectedGender(gender)}
+                        className="peer appearance-none w-5 h-5
+                            border-2 border-base rounded-full cursor-pointer
+                            checked:border-base checked:border-[6px] transition-all"
+                    />
+                  </div>
+                  <span className="text-[14px] text-base">
+                    {GENDER_LABEL[gender]}
+                  </span>
+                </label>
+            ))}
+          </div>
+        </div>
 
         <div className="mt-[50px]">
           <Button

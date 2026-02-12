@@ -36,7 +36,7 @@ export default function Input({
           rounded-full w-full h-[43px]
           ${error ? "border-warning" : "border-light"}`}
             disabled={disabled}
-            maxLength={(type === "nickname") ? 15 : 30}
+            maxLength={(type === "nickname") ? 15 : 40}
         />
         {isPassword && (
             <button

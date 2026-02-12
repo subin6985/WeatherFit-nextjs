@@ -8,6 +8,7 @@ import {doc, updateDoc} from "firebase/firestore";
 import {db} from "../../../../lib/firebase";
 import Input from "../../../../components/baseUI/Input";
 import Button from "../../../../components/baseUI/Button";
+import {Gender, GENDER_LABEL, GENDER_LIST} from "../../../../types";
 
 export default function FinishGooglePage() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function FinishGooglePage() {
   const [nickname, setNickname] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedGender, setSelectedGender] = useState<Gender>(Gender.NO_SELECT);
 
   useEffect(() => {
     // 로그인되지 않은 경우 로그인 페이지로
@@ -45,6 +47,7 @@ export default function FinishGooglePage() {
       // Firestore users 컬렉션 업데이트
       await updateDoc(doc(db, "users", user.uid), {
         nickname: nickname,
+        gender: selectedGender
       });
 
       // 홈으로 이동
@@ -76,6 +79,34 @@ export default function FinishGooglePage() {
               {error}
             </div>
         )}
+
+        <div className="flex flex-col gap-[14px] mt-[10px] mb-[50px]">
+          <div className="text-[16px] items-center ml-[18px]">성별</div>
+          <div className="flex items-center gap-[25px]">
+            {GENDER_LIST.map((gender) => (
+                <label
+                    key={gender}
+                    className="flex items-center gap-[5px] cursor-pointer"
+                >
+                  <div className="relative h-5">
+                    <input
+                        type="radio"
+                        name="gender"
+                        value={gender}
+                        checked={selectedGender === gender}
+                        onChange={() => setSelectedGender(gender)}
+                        className="peer appearance-none w-5 h-5
+                            border-2 border-base rounded-full cursor-pointer
+                            checked:border-base checked:border-[6px] transition-all"
+                    />
+                  </div>
+                  <span className="text-[14px] text-base">
+                    {GENDER_LABEL[gender]}
+                  </span>
+                </label>
+            ))}
+          </div>
+        </div>
 
         <div className="mt-[50px] flex flex-col gap-[10px]">
           <Button
