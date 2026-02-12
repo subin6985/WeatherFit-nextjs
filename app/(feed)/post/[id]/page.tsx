@@ -29,6 +29,7 @@ export default function PostPage() {
   const [isToggling, setIsToggling] = useState(false);
 
   const [commentCount, setCommentCount] = useState(0);
+  const [imageHeight, setImageHeight] = useState<number>(393);
 
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -55,6 +56,28 @@ export default function PostPage() {
 
     fetchPost();
   }, [id, user]);
+
+  useEffect(() => {
+    if (!post?.photo) {
+      setImageHeight(393);
+      return;
+    }
+
+    const img = new Image();
+    img.src = post.photo;
+
+    img.onload = () => {
+      const aspectRatio = img.height / img.width;
+
+      const minHeight = 393;
+      const maxHeight = 491;
+
+      const calculatedHeight = 393 * aspectRatio;
+      const finalHeight = Math.min(Math.max(calculatedHeight, minHeight), maxHeight);
+
+      setImageHeight(finalHeight);
+    }
+  }, [post?.photo]);
 
   // 실시간 좋아요 구독
   useEffect(() => {
@@ -188,13 +211,13 @@ export default function PostPage() {
           <div className="flex px-[20px] py-[18px] items-center justify-between">
             <div className="flex flex-row gap-[10px]">
               {post.member.profilePhoto ? (
-                  <img
-                      src={post.member.profilePhoto}
-                      alt={post.member.nickname}
-                      width={52}
-                      height={52}
-                      className="rounded-full object-cover"
-                  />
+                  <div className="w-[52px] h-[52px] rounded-full overflow-hidden">
+                    <img
+                        src={post.member.profilePhoto}
+                        alt={post.member.nickname}
+                        className="w-full h-full object-cover"
+                    />
+                  </div>
               ) : (
                   <div className="w-[52px] h-[52px] rounded-full bg-light" />
               )}
@@ -250,7 +273,8 @@ export default function PostPage() {
                 <img
                     src={post.photo}
                     alt="포스트 이미지"
-                    className="w-full h-[393px] object-cover"
+                    className="w-full object-cover"
+                    style={{ height: `${imageHeight}px` }}
                 />
             ) : (
                 <div className="w-full h-[393px] bg-light" />

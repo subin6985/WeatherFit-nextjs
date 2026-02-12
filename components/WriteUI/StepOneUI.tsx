@@ -1,6 +1,6 @@
 "use client";
 
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import SmallButton from "../baseUI/SmallButton";
 
 interface StepOneUIProps {
@@ -13,6 +13,31 @@ export default function StepOneUI({file, setFile, onComplete}: StepOneUIProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [disable, setDisable] = useState(true);
+  const [imageHeight, setImageHeight] = useState<number>(393); // 기본 높이
+
+  // 이미지 크기 계산
+  useEffect(() => {
+    if (!file) {
+      setImageHeight(393);
+      return;
+    }
+
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const aspectRatio = img.height / img.width;
+
+      // 최소 1:1, 최대 4:5
+      const minHeight = 393;
+      const maxHeight = 491;
+
+      const calculatedHeight = 393 * aspectRatio;
+      const finalHeight = Math.min(Math.max(calculatedHeight, minHeight), maxHeight);
+
+      setImageHeight(finalHeight);
+    };
+  }, [file]);
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
@@ -43,10 +68,11 @@ export default function StepOneUI({file, setFile, onComplete}: StepOneUIProps) {
       <div className="flex flex-col">
         <div
           onClick={handleImageClick}
-          className="group w-full h-[393px] bg-light
+          className="group w-full bg-light
                       flex items-center justify-center cursor-pointer
                       relative overflow-hidden"
-          >
+          style={{ height: `${imageHeight}px` }}
+        >
           {file ? (
               <img
                 src={URL.createObjectURL(file)}
