@@ -1,7 +1,7 @@
 # 🌡️ 날씨 기반 옷차림 공유 플랫폼
 
 > "오늘 같은 날씨에는 뭐 입지?" - 실제 날씨 데이터와 AI 분석 기반 옷차림 추천 및 공유 서비스
-> 
+> [WeatherFit]()
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
@@ -187,11 +187,27 @@ npm install
 
 #### 4. WebSocket 서버 설정
 
+WebSocket 서버는 별도 레포지토리로 관리됩니다.
+
+**레포지토리**: [socket-server](https://github.com/subin6985/WeatherFit-socket)
+
+같은 상위 디렉토리에 클론하는 것을 권장합니다.
+
+```
+weatherfit/
+├── app/            # FE
+└── socket-server/  # WebSocket 서버
+```
+
 ```bash
+# 1. 별도로 클론
+git clone https://github.com/subin6985/WeatherFit-socket.git
 cd socket-server
+
+# 2. 의존성 설치
 npm install
 
-# .env 파일 생성
+# 3. .env 파일 생성
 echo "CLIENT_URL=http://localhost:3000" > .env
 echo "PORT=3001" >> .env
 ```
