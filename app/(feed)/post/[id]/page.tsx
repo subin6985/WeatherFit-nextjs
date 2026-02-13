@@ -13,7 +13,9 @@ import {useCommentStore} from "../../../../store/useCommentStore";
 import ChatButton from "../../../../components/chat/ChatButton";
 
 export default function PostPage() {
-  const { id } = useParams();
+  const params = useParams();
+  const { id } = params.id as string;
+
   const { setCurrentPage } = useNavigationStore();
   const { user } = useAuthStore.getState();
   const { isCommentOpen, setIsCommentOpen, toggleComment } = useCommentStore();

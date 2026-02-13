@@ -13,7 +13,9 @@ import { db } from "../../../../../lib/firebase";
 export default function EditPage() {
   const router = useRouter();
   const { user } = useAuthStore.getState();
-  const { id } = useParams<string|null>();
+
+  const params = useParams();
+  const { id } = params.id as string;
 
   const [outfitRegion, setOutfitRegion] = useState<string>("");
   const [outfitDate, setOutfitDate] = useState<Date | null>(null);
