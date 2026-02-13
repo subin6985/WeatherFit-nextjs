@@ -19,6 +19,7 @@ export default function RootLayout({
 }) {
   return (
       <html lang="en">
+        <link rel="icon" href="/Weather.png" sizes="any" />
         <body className="w-full h-screen flex justify-center items-center">
           <LayoutWrapper>
             <AuthProvider>
