@@ -29,7 +29,7 @@ export default function MypostPage () {
   const fetchMyPosts = useCallback(
       (lastDoc, pageSize, filters) => {
         if (!user?.uid) {
-          return Promise.resolve({ posts: [], lastdoc: null, hasMore: false });
+          return Promise.resolve({ posts: [], lastDoc: null, hasMore: false });
         }
         return getMyPosts(user.uid, lastDoc, pageSize, filters);
       },

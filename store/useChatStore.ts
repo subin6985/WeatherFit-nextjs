@@ -29,7 +29,7 @@ export const useChatStore = create<ChatStore>((set) => ({
     isChatListOpen: true
   }),
 
-  cloaseAll: () => set({
+  closeAll: () => set({
     isChatListOpen: false,
     activeChatRoomId: null
   }),

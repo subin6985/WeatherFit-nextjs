@@ -151,7 +151,7 @@ export default function StepTwoUI({
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.log('Error message:', errorMessage);
 
-      if (errorMessage.includes('인식할 수 없습니다' || 'AI 분석')) {
+      if (errorMessage.includes('인식할 수 없습니다')) {
         alert('이미지에서 옷을 정확히 인식할 수 없습니다.\n전신 사진을 사용해주세요.');
       } else {
         alert("게시글 작성에 실패했습니다.");

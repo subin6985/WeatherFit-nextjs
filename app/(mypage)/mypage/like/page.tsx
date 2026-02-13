@@ -29,7 +29,7 @@ export default function LikePage () {
   const fetchLikedPosts = useCallback(
       (lastDoc, pageSize, filters) => {
         if (!user?.uid) {
-          return Promise.resolve({ posts: [], lastdoc: null, hasMore: false });
+          return Promise.resolve({ posts: [], lastDoc: null, hasMore: false });
         }
         return getLikedPosts(user.uid, lastDoc, pageSize, filters);
       },

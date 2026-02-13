@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 interface InputProps {
-  type?: "text" | "password";
+  type?: "text" | "password" | "nickname";
   placeholder?: string;
   error?: boolean;
   value: string;

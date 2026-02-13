@@ -31,8 +31,8 @@ export default function EditInfoPage () {
 
   const [profile, setProfile] = useState<ProfileDetail|null>(null);
   const [file, setFile] = useState<File|null>(null);
-  const [profilePhotoURL, setProfilePhotoURL] = useState<String>("");
-  const [nickname, setNickname] = useState<String>("");
+  const [profilePhotoURL, setProfilePhotoURL] = useState<string>("");
+  const [nickname, setNickname] = useState<string>("");
   const [selectedGender, setSelectedGender] = useState<Gender>(Gender.NO_SELECT);
 
   useEffect(() => {
@@ -175,7 +175,7 @@ export default function EditInfoPage () {
           <SmallButton onClick={handleComplete}
                        disabled={!nickname ||
                                   (nickname === profile?.nickname &&
-                                  file === profile?.profilePhoto &&
+                                  !file &&
                                   selectedGender === profile?.gender)}
                        >
             저장

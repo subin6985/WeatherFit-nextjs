@@ -14,8 +14,7 @@ export default function EditPage() {
   const router = useRouter();
   const { user } = useAuthStore.getState();
 
-  const params = useParams();
-  const { id } = params.id as string;
+  const { id } = useParams<{ id: string }>();
 
   const [outfitRegion, setOutfitRegion] = useState<string>("");
   const [outfitDate, setOutfitDate] = useState<Date | null>(null);

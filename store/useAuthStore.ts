@@ -38,10 +38,13 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
+  loginWithGoogle: () => Promise<{ isNewUser: boolean }>;
   setUser: (user: User | null) => void;
   initAuth: () => () => void;
   checkAuthExpiry: () => void;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
+  deleteAccount: (password: string) => Promise<boolean>;
+  deleteAccountGoogle: () => Promise<boolean>;
 }
 
 // 로그인 유지 기간 30일
@@ -459,8 +462,6 @@ export const useAuthStore = create<AuthState>()(
                 isLoggedIn: false,
                 isLoading: false,
               });
-
-              return true;
 
               return true;
             } catch (error: any) {

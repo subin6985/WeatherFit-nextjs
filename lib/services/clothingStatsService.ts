@@ -117,8 +117,8 @@ export const getClothingStats = async (
   }
 
   // 비율 계산
-  const topTotal = Object.values(data.top).reduce((sum: number, val: any) => sum + val, 0);
-  const bottomTotal = Object.values(data.bottom).reduce((sum: number, val: any) => sum + val, 0);
+  const topTotal: any = Object.values(data.top).reduce((sum: number, val: any) => sum + val, 0);
+  const bottomTotal: any = Object.values(data.bottom).reduce((sum: number, val: any) => sum + val, 0);
 
   // 합계가 0이면 빈 데이터 반환
   if (topTotal === 0 || bottomTotal === 0) {
@@ -204,8 +204,8 @@ export const subscribeClothingStats = (
       return;
     }
 
-    const topTotal = Object.values(data.top).reduce((sum: number, val: any) => sum + val, 0);
-    const bottomTotal = Object.values(data.bottom).reduce((sum: number, val: any) => sum + val, 0);
+    const topTotal: any = Object.values(data.top).reduce((sum: number, val: any) => sum + val, 0);
+    const bottomTotal: any = Object.values(data.bottom).reduce((sum: number, val: any) => sum + val, 0);
 
     if (topTotal === 0 || bottomTotal === 0) {
       callback({ top: [], bottom: [] });

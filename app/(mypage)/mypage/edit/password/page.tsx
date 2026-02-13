@@ -16,13 +16,13 @@ export default function EditPasswordPage () {
 
   const router = useRouter();
 
-  const [currentPassword, setCurrentPassword] = useState<String>("");
-  const [newPassword, setNewPassword] = useState<String>("");
+  const [currentPassword, setCurrentPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPw, setConfirmPw] = useState("");
-  const [matchError, setMatchError] = useState<Boolean>(false);
+  const [matchError, setMatchError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPwError, setConfirmPwError] = useState(false);
-  const [loading, setLoading] = useState<Boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [complete, setComplete] = useState(false);
 
   useEffect(() => {
