@@ -67,6 +67,9 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
     });
 
     newSocket.on('receive-message', (message: ChatMessage) => {
+      // 내가 보낸 메시지는 무시 (Firebase에서 받음)
+      if (message.senderId === user.uid) return;
+
       setMessages(prev => [...prev, message]);
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -259,11 +262,13 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
                     <div className={`flex gap-2 max-w-[70%] ${isMyMessage ? 'flex-row-reverse' : 'flex-row'}`}>
                       {!isMyMessage && (
                           (msg.senderPhoto && !isOtherUserDeleted) ? (
-                              <img
-                                  src={msg.senderPhoto}
-                                  alt={msg.senderName}
-                                  className="w-8 h-8 rounded-full"
-                              />
+                              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                                <img
+                                    src={msg.senderPhoto}
+                                    alt={msg.senderName}
+                                    className="w-full h-full object-cover"
+                                />
+                              </div>
                           ) : (
                               <div className="w-8 h-8 rounded-full bg-light" />
                           )
@@ -276,7 +281,7 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
                             </div>
                         )}
                         <div
-                            className={`inline-flex px-3 py-2 rounded-2xl ${
+                            className={`px-3 py-2 rounded-2xl ${
                                 isMyMessage
                                     ? 'bg-primary text-white'
                                     : 'bg-gray-100 text-base'

@@ -98,13 +98,15 @@ export default function ChatListModal() {
                           className="flex items-center gap-3 p-4 hover:bg-gray-200 cursor-pointer"
                         >
                           {(otherUser.photo && !room.isOtherUserDeleted) ? (
-                              <img
-                                src={otherUser.photo}
-                                alt={otherUser.name}
-                                className="w-12 h-12 rounded-full"
-                              />
+                              <div className="w-12 h-12 rounded-full overflow-hidden">
+                                <img
+                                    src={otherUser.photo}
+                                    alt={otherUser.name}
+                                    className="w-full h-full object-cover"
+                                />
+                              </div>
                           ) : (
-                              <div className="w-12 h-12 rounded-full bg-light" />
+                              <div className="w-12 h-12 rounded-full bg-light"/>
                           )}
 
                           <div className="flex-1 min-w-0">

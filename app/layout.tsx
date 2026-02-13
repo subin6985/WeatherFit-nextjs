@@ -8,7 +8,8 @@ export const metadata: Metadata = {
     template: "%s | WeatherFit",
     default: "WeatherFit",
   },
-  description: "날씨에 맞는 옷차림을 추천받으세요"
+  description: "날씨에 맞는 옷차림을 추천받으세요",
+
 }
 
 export default function RootLayout({
