@@ -1,8 +1,8 @@
 "use client";
 
 import {useEffect, useState} from "react";
-import StepOneUI from "../../../components/WriteUI/StepOneUI";
-import StepTwoUI from "../../../components/WriteUI/StepTwoUI";
+import StepOneUI from "../../../components/writeUI/StepOneUI";
+import StepTwoUI from "../../../components/writeUI/StepTwoUI";
 import {useWriteStore} from "../../../store/useWriteStore";
 import {useNavigationStore} from "../../../store/useNavigationStore";
 

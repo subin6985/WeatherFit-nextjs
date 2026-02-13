@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import EmailVerificationUI from "../../../components/SignupUI/EmailVerificationUI";
-import SetPasswordUI from "../../../components/SignupUI/SetPasswordUI";
-import FinishUI from "../../../components/SignupUI/FinishUI";
+import EmailVerificationUI from "../../../components/signupUI/EmailVerificationUI";
+import SetPasswordUI from "../../../components/signupUI/SetPasswordUI";
+import FinishUI from "../../../components/signupUI/FinishUI";
 
 export default function SignupPage() {
   const [step, setStep] = useState(1);
