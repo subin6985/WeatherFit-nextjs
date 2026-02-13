@@ -3,25 +3,51 @@
 import { useEffect, useState } from 'react';
 import { useAuthStore } from "../../store/useAuthStore";
 import { useChatStore } from "../../store/useChatStore";
-import { subscribeChatRooms, ChatRoom } from "../../lib/services/chatService";
+import {subscribeChatRooms, ChatRoom, checkUserExists} from "../../lib/services/chatService";
+
+interface ChatRoomWithStatus extends ChatRoom {
+  isOtherUserDeleted?: boolean;
+}
 
 export default function ChatListModal() {
   const { user } = useAuthStore();
   const { closeChatList, openChatRoom } = useChatStore();
-  const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+  const [chatRooms, setChatRooms] = useState<ChatRoomWithStatus[]>([]);
 
   useEffect(() => {
     if (!user?.uid) return;
 
-    const unsubscribe = subscribeChatRooms(user.uid, (rooms) => {
-      setChatRooms(rooms);
+    const unsubscribe = subscribeChatRooms(user.uid, async(rooms) => {
+      // 각 채팅방의 상대방 탈퇴 여부 확인
+      const roomsWithStatus = await Promise.all(
+          rooms.map(async (room) => {
+            const otherUserId = room.participants.find(id => id !== user.uid);
+            const isDeleted = otherUserId ? !(await checkUserExists(otherUserId)) : false;
+
+            return {
+              ...room,
+              isOtherUserDeleted: isDeleted,
+            };
+          })
+      );
+
+      setChatRooms(roomsWithStatus);
     });
 
     return () => unsubscribe();
   }, [user]);
 
-  const getOtherUser = (room: ChatRoom) => {
+  const getOtherUser = (room: ChatRoomWithStatus) => {
     const otherUserId = room.participants.find(id => id !== user.uid);
+
+    if (room.isOtherUserDeleted) {
+      return {
+        id: otherUserId,
+        name: '탈퇴한 회원',
+        photo: '',
+      };
+    }
+
     return {
       id: otherUserId,
       name: room.participantNames[otherUserId || ''],
@@ -69,9 +95,9 @@ export default function ChatListModal() {
                         <div
                           key={room.id}
                           onClick={() => handleRoomClick(room.id)}
-                          className="flex items-center gap-3 p-4 hover:bg-light cursor-pointer"
+                          className="flex items-center gap-3 p-4 hover:bg-gray-200 cursor-pointer"
                         >
-                          {otherUser.photo ? (
+                          {(otherUser.photo && !room.isOtherUserDeleted) ? (
                               <img
                                 src={otherUser.photo}
                                 alt={otherUser.name}
@@ -83,7 +109,9 @@ export default function ChatListModal() {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="font-semibold">{otherUser.name}</span>
+                              <span className="font-semibold">
+                                {room.isOtherUserDeleted ? '(탈퇴한 회원)' : otherUser.name}
+                              </span>
                               <span className="text-xs text-middle">
                                 {new Date(room.lastMessageTime).toLocaleDateString()}
                               </span>

@@ -33,6 +33,63 @@ export interface ChatMessage {
   isRead: boolean;
 }
 
+// 사용자가 존재하는지 확인
+export const checkUserExists = async (userId: string): Promise<boolean> => {
+  try {
+    const userDoc = await getDoc(doc(db, 'users', userId));
+    return userDoc.exists();
+  } catch (error) {
+    console.error('사용자 확인 실패:', error);
+    return false;
+  }
+};
+
+// 상대방 정보 가져오기
+export const getOtherUserInfo = async (
+    roomId: string,
+    currentUserId: string
+): Promise<{
+  userId: string;
+  name: string;
+  photo: string;
+  isDeleted: boolean;
+}> => {
+  try {
+    const roomDoc = await getDoc(doc(db, 'chatRooms', roomId));
+    if (!roomDoc.exists()) {
+      throw new Error('채팅방을 찾을 수 없습니다.');
+    }
+
+    const roomData = roomDoc.data();
+    const otherUserId = roomData.participants.find((id: string) => id !== currentUserId)
+
+    if (!otherUserId) {
+      throw new Error('상대방을 찾을 수 없습니다.');
+    }
+
+    const userExists = await checkUserExists(otherUserId);
+
+    if (!userExists) {
+      return {
+        userId: otherUserId,
+        name: '탈퇴한 회원',
+        photo: '',
+        isDeleted: true,
+      };
+    }
+
+    return {
+      userId: otherUserId,
+      name: roomData.participantNames[otherUserId] || '',
+      photo: roomData.participantPhotos[otherUserId] || '',
+      isDeleted: false,
+    };
+  } catch (error) {
+    console.error('상대방 정보 가져오기 실패:', error);
+    throw error;
+  }
+}
+
 // 채팅방 생성 또는 가져오기
 export const getOrCreateChatRoom = async (
     currentUserId: string,
@@ -42,6 +99,12 @@ export const getOrCreateChatRoom = async (
     otherUserName: string,
     otherUserPhoto: string
 ): Promise<string> => {
+  // 상대방이 존재하는지 확인
+  const otherUserExists = await checkUserExists(otherUserId);
+  if (!otherUserExists) {
+    throw new Error('상대방이 탈퇴한 회원입니다.');
+  }
+
   const roomsRef = collection(db, 'chatRooms');
 
   // 두 사용자 간의 기존 채팅방 찾기

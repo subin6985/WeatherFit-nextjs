@@ -8,7 +8,7 @@ import {
   subscribeMessages,
   saveMessage,
   markMessagesAsRead,
-  ChatMessage,
+  ChatMessage, getOtherUserInfo,
 } from '../../lib/services/chatService';
 
 interface ChatRoomModalProps {
@@ -26,8 +26,29 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
   const [typingUser, setTypingUser] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
+  const [otherUserName, setOtherUserName] = useState<string>('');
+  const [isOtherUserDeleted, setIsOtherUserDeleted] = useState<boolean>(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 상대방 정보 로드
+  useEffect(() => {
+    if (!user || !roomId) return;
+
+    const loadOtherUserInfo = async () => {
+      try {
+        const info = await getOtherUserInfo(roomId, user.uid);
+        setOtherUserName(info.name);
+        setIsOtherUserDeleted(info.isDeleted);
+      } catch (error) {
+        console.error('상대방 정보 로드 실패:', error);
+        setOtherUserName('알 수 없음');
+      }
+    };
+
+    loadOtherUserInfo();
+  }, [roomId, user]);
 
   // 웹소켓 연결
   useEffect(() => {
@@ -94,6 +115,11 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
   }, [messages, user, roomId]);
 
   const sendMessage = async () => {
+    if (isOtherUserDeleted) {
+      alert('탈퇴한 회원에게는 메시지를 보낼 수 없습니다.');
+      return;
+    }
+
     if (!inputValue.trim() || !socket || !user) return;
 
     const messageData = {
@@ -129,6 +155,8 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isOtherUserDeleted) return;
+
     setInputValue(e.target.value);
 
     if (!socket || !user) return;
@@ -188,10 +216,15 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
           <div className="flex items-center justify-between px-4 py-3 border-b border-light">
             <button
                 onClick={handleBack}
-                className="p-2 hover:bg-light rounded"
+                className="p-2 hover:bg-gray-200 rounded"
             >
               ← 뒤로
             </button>
+            <div className="flex-1 text-center">
+              <span className={`font-semibold ${isOtherUserDeleted ? 'text-gray-middle' : ''}`}>
+                  {otherUserName}
+              </span>
+            </div>
             <div className="flex items-center gap-2">
               <div
                   className={`w-2 h-2 rounded-full ${
@@ -203,6 +236,15 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
             </span>
             </div>
           </div>
+
+          {/* 탈퇴 회원 안내 메시지 */}
+          {isOtherUserDeleted && (
+              <div className="bg-red-50 border-b border-red-200 px-4 py-2">
+                <p className="text-sm text-red-600 text-center">
+                  상대방이 탈퇴하여 더 이상 메시지를 보낼 수 없습니다.
+                </p>
+              </div>
+          )}
 
           {/* 메시지 목록 */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -216,7 +258,7 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
                   >
                     <div className={`flex gap-2 max-w-[70%] ${isMyMessage ? 'flex-row-reverse' : 'flex-row'}`}>
                       {!isMyMessage && (
-                          msg.senderPhoto ? (
+                          (msg.senderPhoto && !isOtherUserDeleted) ? (
                               <img
                                   src={msg.senderPhoto}
                                   alt={msg.senderName}
@@ -227,10 +269,10 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
                           )
                       )}
 
-                      <div>
+                      <div className={`flex flex-col ${isMyMessage ? 'items-end' : 'items-start'}`}>
                         {!isMyMessage && (
                             <div className="text-xs text-middle mb-1">
-                              {msg.senderName}
+                              {isOtherUserDeleted ? '(탈퇴한 회원)' : msg.senderName}
                             </div>
                         )}
                         <div
@@ -278,12 +320,13 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
                   value={inputValue}
                   onChange={handleInputChange}
                   onKeyPress={handleKeyPress}
-                  placeholder="메시지를 입력하세요"
+                  placeholder={isOtherUserDeleted ? "메시지를 보낼 수 없습니다" : "메시지를 입력하세요"}
+                  disabled={isOtherUserDeleted}
                   className="flex-1 px-4 py-2 border border-light rounded-full focus:outline-none focus:border-primary"
               />
               <button
                   onClick={sendMessage}
-                  disabled={!inputValue.trim()}
+                  disabled={!inputValue.trim() || isOtherUserDeleted}
                   className="px-6 py-2 bg-primary text-white rounded-full hover:bg-primary/90 disabled:bg-light disabled:cursor-not-allowed"
               >
                 전송
