@@ -40,9 +40,12 @@ export const sendVerificationCode = onCall(
           "already-exists",
           "이미 가입된 이메일입니다."
         );
-      } catch (error: any) {
-        if (error.code !== "auth/user-not-found") {
-          throw error;
+      } catch (error: unknown) {
+        if (error instanceof Error && "code" in error) {
+          const firebaseError = error as {code: string};
+          if (firebaseError.code !== "auth/user-not-found") {
+            throw error;
+          }
         }
       }
 
@@ -86,12 +89,13 @@ export const sendVerificationCode = onCall(
       });
 
       return {success: true, message: "인증 코드가 전송되었습니다."};
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof HttpsError) {
         throw error;
       }
 
-      console.error("이메일 전송 실패:", error);
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      console.error("이메일 전송 실패:", errorMessage);
       throw new HttpsError("internal", "이메일 전송에 실패했습니다.");
     }
   }
@@ -141,11 +145,12 @@ export const verifyCode = onCall(async (request) => {
     await docRef.update({verified: true});
 
     return {success: true, message: "이메일 인증이 완료되었습니다."};
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof HttpsError) {
       throw error;
     }
-    console.error("코드 검증 실패:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("코드 검증 실패:", errorMessage);
     throw new HttpsError("internal", "코드 검증에 실패했습니다.");
   }
 });
@@ -161,8 +166,9 @@ export const invalidateVerification = onCall(async (request) => {
   try {
     await db.collection("emailVerifications").doc(email).delete();
     return {success: true, message: "인증이 초기화되었습니다."};
-  } catch (error) {
-    console.error("인증 초기화 실패:", error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("인증 초기화 실패:", errorMessage);
     throw new HttpsError("internal", "인증 초기화에 실패했습니다.");
   }
 });
