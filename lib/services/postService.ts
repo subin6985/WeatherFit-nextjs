@@ -331,7 +331,7 @@ export const deletePost = async (postId: string, userId: string) => {
     await deleteDoc(doc(db, "posts", postId));
 
     // 이미지 삭제
-    const photoRef = ref(storage, `posts/${userId}/${Date.now()}`);
+    const photoRef = ref(storage, postData.photo);
     await deleteObject(photoRef);
 
     return true;
