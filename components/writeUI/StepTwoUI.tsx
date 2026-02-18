@@ -115,9 +115,9 @@ export default function StepTwoUI({
 
     try {
       setSubmitting(true);
-      
+
       // AI 분석 진행
-      alert('이미지를 분석하고 있습니다...');
+      // alert('이미지를 분석하고 있습니다...');
 
       // 사용자 gender 정보 가져오기
       let gender = "NO_SELECT";

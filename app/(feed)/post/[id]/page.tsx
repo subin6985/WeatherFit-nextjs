@@ -259,7 +259,7 @@ export default function PostPage() {
                         </div>
                     )}
                   </div>
-                ) : (
+                ) : (user &&
                     <ChatButton
                         otherUserId={post.member.memberId}
                         otherUserName={post.member.nickname}
