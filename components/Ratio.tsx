@@ -16,7 +16,7 @@ export type RatioResponse = {
 
 interface RatioProps {
   loading: boolean;
-  currentTemp: number;
+  avgTemp: number;
 }
 
 // 더미 데이터
