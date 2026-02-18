@@ -173,7 +173,7 @@ export default function FeedGrid({
       <div className="flex flex-col flex-1 relative justify-start">
         {showWriteButton && (
             <button
-                className="fixed w-[70px] h-[70px] bottom-[55px] right-[32%] -translate-x-1/2 rounded-full
+                className="absolute w-[70px] h-[70px] bottom-14 right-5 rounded-full
                             bg-primary shadow-[2px_2px_4px_rgba(0,0,0,0.25)] flex items-center justify-center z-10
                             hover:scale-95 transition-all duration-100 ease-in-out"
                 onClick={() => router.push('/write')}
@@ -183,8 +183,8 @@ export default function FeedGrid({
         )}
 
         {title && (
-            <div className="absolute -top-[45px] left-[70px] z-20">
-              <h1 className="text-[22px]">{title}</h1>
+            <div className="absolute -top-[44px] left-[70px] z-20">
+              <h1 className="text-[20px]">{title}</h1>
             </div>
         )}
 

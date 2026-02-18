@@ -43,7 +43,7 @@ export default function NotificationBell() {
   }
 
   return (
-      <div className="relative mb-[13px]">
+      <div className="relative">
         <button
             onClick={() => setIsOpen(!isOpen)}
             className="relative p-0"

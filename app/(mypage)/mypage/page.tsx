@@ -75,7 +75,7 @@ export default function MyPage() {
 
   return (
       <div className="flex flex-col px-[45px] h-screen items-center">
-        <div className="mt-[42px] mb-[24px]">
+        <div className="mt-[42px] mb-[24px] flex-shrink-0">
           {profile?.profilePhoto ? (
               <div className="w-[145px] h-[145px] rounded-full overflow-hidden">
                 <img
@@ -87,17 +87,18 @@ export default function MyPage() {
               <div className="w-[145px] h-[145px] rounded-full bg-light"/>
           )}
         </div>
-        <div className="flex flex-col justify-center gap-0 mb-[32px]">
+        <div className="flex flex-col justify-center gap-0 mb-[32px] flex-shrink-0">
           <div className="text-base text-xl text-center">{profile?.nickname}</div>
           <p className="text-light text-center">{profile?.email}</p>
         </div>
-        <div className="flex flex-col gap-[19px]">
+        <div className="flex flex-col gap-[19px] flex-shrink-0">
           <ProfileButton onClick={onInfoClick}>
             <>
               <img
                   src="/Info.png"
                   width={35}
                   height={35}
+                  alt="내 정보"
               />
               내 정보 수정
             </>
@@ -108,6 +109,7 @@ export default function MyPage() {
                   src="/Post.png"
                   width={35}
                   height={35}
+                  alt="내가 쓴 게시글"
               />
               내가 쓴 게시글
             </>
@@ -118,6 +120,7 @@ export default function MyPage() {
                   src="/Like.png"
                   width={35}
                   height={35}
+                  alt="내가 좋아요 한 게시글"
               />
               내가 좋아요 한 게시글
             </>

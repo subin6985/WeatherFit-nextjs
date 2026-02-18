@@ -79,10 +79,10 @@ export default function LoginPage() {
   if (isLoading || isLoggedIn) return null;
 
   return (
-      <div className="flex flex-col relative h-screen justify-center items-center">
+      <div className="flex flex-col relative h-screen justify-center items-center px-5">
         <button
             onClick={returnToMain}
-            className="absolute left-[20px] top-[50px]"
+            className="absolute left-5 top-[50px]"
         >
           <img
               src="/Return.png"
@@ -93,17 +93,17 @@ export default function LoginPage() {
           />
         </button>
 
-        <button onClick={returnToMain}>
+        <button onClick={returnToMain} className="mb-[56px]">
           <img
               src="/WeatherFit.png"
               alt="WeatherFit Logo"
               width={227}
               height={100}
-              className="w-[227px] h-auto mb-[56px]"
+              className="w-[227px] h-auto"
           />
         </button>
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLogin} className="w-full max-w-[303px] flex flex-col items-center">
           <div className="mb-[17px]">
             <Input
                 placeholder="이메일"
@@ -113,7 +113,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <div className="relative flex flex-col items-center mb-[29px]">
+          <div className="relative mb-[29px]">
             <Input
                 type="password"
                 placeholder="비밀번호"

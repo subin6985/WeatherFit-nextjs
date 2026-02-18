@@ -96,7 +96,7 @@ export default function CommentSection({ postId, postAuthorId }: CommentSectionP
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="댓글을 입력하세요"
-                className="w-full px-[12px] py-[8px] border border-light rounded-lg
+                className="w-full px-3 py-2 border border-light rounded-lg
                        resize-none focus:outline-none focus:border-primary"
                 rows={2}
             />

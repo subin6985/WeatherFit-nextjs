@@ -116,31 +116,31 @@ export default function WeatherClient() {
   }
 
   return (
-      <div className="relative h-screen flex flex-col justify-between">
+      <div className="relative h-screen flex flex-col justify-between overflow-hidden">
         {/* 배경 이미지 + 오버레이 */}
         <div className={`absolute inset-0 ${bg} bg-cover bg-center`}>
           <div className="absolute inset-0 bg-black/30" />
         </div>
 
-        <div className="relative flex pt-[50px] ml-[20px] mr-[20px] justify-between">
-          <div>
+        <div className="relative flex pt-[50px] px-5 justify-between">
+          <div className="flex-shrink-0">
             <div className="text-snow text-[16px] font-bold">현재 기온</div>
-            <div className="flex flex-row">
-              <div className="text-snow text-[128px] font-bold -mt-[40px]">
+            <div className="flex flex-row items-start py-1">
+              <div className="text-snow text-[128px] font-bold leading-[0.8]">
                 {currTemp}
               </div>
               <div className="text-snow text-[36px] font-bold">℃</div>
             </div>
-            <div className="text-snow text-[20px] font-bold -mt-[15px]">
+            <div className="text-snow text-[20px] font-bold pt-1">
               일 평균 {avgTemp}℃ · {avgWeather}
             </div>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-[13px] flex-shrink-0">
             <button onClick={handleFeedButton}>
-              <img src="/Feed.png" alt="Feed" className="w-[40px] h-[40px] mb-[13px]" />
+              <img src="/Feed.png" alt="Feed" className="w-[40px] h-[40px]" />
             </button>
             <button onClick={handleLoginButton}>
-              <img src="/User.png" alt="User" className="w-[40px] h-[40px] mb-[13px]" />
+              <img src="/User.png" alt="User" className="w-[40px] h-[40px]" />
             </button>
             {isLoggedIn && (
                 <>
@@ -154,11 +154,11 @@ export default function WeatherClient() {
           </div>
         </div>
 
-        <div className="relative ml-[20px]">
-          <div className="text-snow text-[20px] font-bold">
+        <div className="relative px-5 pb-8">
+          <div className="text-snow text-[20px] font-bold mb-4">
             오늘 같은 날씨에 많이 입는 옷
           </div>
-          <Ratio loading={isLoading} currentTemp={currTemp} />
+          <Ratio loading={isLoading} avgTemp={avgTemp} />
         </div>
       </div>
   );

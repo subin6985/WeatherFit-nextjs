@@ -77,28 +77,28 @@ export default function CommentItem({ comment, postId, onUpdate }: CommentItemPr
   return (
     <div>
       {/* 원댓글 */}
-      <div className="flex gap-[12px]">
+      <div className="flex gap-3">
         {comment.isDeleted ? (
             // 삭제된 댓글
-            <div className="w-[36px] h-[36px] rounded-full bg-light" />
+            <div className="w-9 h-9 rounded-full bg-light" />
         ) : comment.userPhoto ? (
           <img
             src={comment.userPhoto}
             alt={comment.userName}
-            className="w-[36px] h-[36px] rounded-full object-cover"
+            className="w-9 h-9 rounded-full object-cover"
           />
         ) : (
-          <div className="w-[36px] h-[36px] rounded-full bg-light" />
+          <div className="w-9 h-9 rounded-full bg-light" />
         )}
 
         <div className="flex-1">
           {comment.isDeleted ? (
             <div>
-              <p className="text-[14px] text-middle italic">
+              <p className="text-sm text-middle italic">
                 삭제된 댓글입니다.
               </p>
               {comment.replyCount > 0 && (
-                  <span className="text-[12px] text-middle mt-[8px] block
+                  <span className="text-[12px] text-middle mt-2 block
                                    cursor-pointer hover:underline hover:brightness-75"
                         onClick={() => setIsReplyOpen(prev => !prev)}>
                     답글 {comment.replyCount}개
@@ -147,30 +147,32 @@ export default function CommentItem({ comment, postId, onUpdate }: CommentItemPr
 
               {/* 답글 입력 */}
               {showReplyInput && (
-                <div className="mt-[12px] flex gap-[8px]">
+                <div className="mt-3 flex gap-2">
                   <input
                     type="text"
                     value={replyInput}
                     onChange={(e) => setReplyInput(e.target.value)}
                     placeholder="답글을 입력하세요"
-                    className="flex-1 px-[8px] border border-light rounded-lg
+                    className="flex-1 w-[200px] p-2 border border-light rounded-lg
                              focus:outline-none focus:border-primary"
                     onKeyPress={(e) => e.key === 'Enter' && handleReplySubmit()}
                   />
-                  <button
-                    onClick={handleReplySubmit}
-                    disabled={!replyInput.trim() || submitting}
-                    className="px-[12px] py-[8px] bg-primary text-white rounded-lg
-                             disabled:bg-gray-300 text-[14px]"
-                  >
-                    {submitting ? '작성 중...' : '등록'}
-                  </button>
-                  <button
-                    onClick={() => setShowReplyInput(false)}
-                    className="px-[12px] py-[8px] border border-light rounded-lg text-[14px]"
-                  >
-                    취소
-                  </button>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={handleReplySubmit}
+                      disabled={!replyInput.trim() || submitting}
+                      className="px-3 py-2 bg-primary text-white rounded-lg
+                               disabled:bg-gray-300 text-sm"
+                    >
+                      {submitting ? '작성 중...' : '등록'}
+                    </button>
+                    <button
+                      onClick={() => setShowReplyInput(false)}
+                      className="px-3 py-2 border border-light rounded-lg text-sm"
+                    >
+                      취소
+                    </button>
+                  </div>
                 </div>
               )}
             </>

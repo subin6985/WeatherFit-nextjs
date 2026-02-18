@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {tempToTempRange} from "../lib/weatherUtils";
-import {getClothingStats, subscribeClothingStats} from "../lib/services/clothingStatsService";
+import {subscribeClothingStats} from "../lib/services/clothingStatsService";
 
 type RatioItem = {
   category: string;
@@ -34,7 +34,7 @@ const MOCK_DATA: RatioResponse = {
 // Mock 사용 여부 (true면 API 안 쓰고 더미만 사용)
 const USE_MOCK = false;
 
-export default function Ratio({loading, currentTemp}: RatioProps) {
+export default function Ratio({loading, avgTemp}: RatioProps) {
   const [filter, setFilter] = useState<"all" | "female" | "male">("all");
   const [data, setData] = useState<RatioResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -51,7 +51,7 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
       return;
     }
 
-    const tempRange = tempToTempRange(currentTemp);
+    const tempRange = tempToTempRange(avgTemp);
 
     const unsubscribe = subscribeClothingStats(tempRange, filter, (newStats) => {
       setData(newStats)
@@ -59,15 +59,15 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
     });
 
     return () => unsubscribe();
-  }, [loading, filter, currentTemp]);
+  }, [loading, filter, avgTemp]);
 
   const renderBar = (item: RatioItem, active: boolean) => (
       <div
-          className="flex items-center w-[285px] text-snow mb-2"
+          className="flex items-center w-full text-snow mb-2 last:mb-0"
           key={item.category}
       >
         <span
-            className={`w-[90px] ${
+            className={`min-w-[70px] flex-shrink-0 ${
                 active ? "text-point font-semibold" : "text-snow"
             }`}
         >
@@ -75,7 +75,7 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
         </span>
 
         {/* Bar */}
-        <div className="flex-1 mx-[10px]">
+        <div className="flex-1 mx-2 min-w-0">
           <div
               className={`h-[6px] rounded-full ${
                   active ? "bg-point" : "bg-snow"
@@ -84,14 +84,18 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
           />
         </div>
 
-        <span className={active ? "text-point font-semibold" : "text-snow"}>
+        <span
+            className={`min-w-[45px] text-right flex-shrink-0 ${
+              active ? "text-point font-semibold" : "text-snow"
+            }`}
+        >
           {Math.round(item.ratio * 100)}%
         </span>
       </div>
   );
 
   if (isLoading || !data) {
-    return <div className="h-[200px] text-snow mt-4">Loading...</div>;
+    return <div className="min-h-[200px] text-snow mt-4">Loading...</div>;
   }
 
   const topMax = data.top.reduce((prev, cur) =>
@@ -104,9 +108,9 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
   );
 
   return (
-      <div className="w-[353px] my-3 text-snow">
+      <div className="w-full px-2 text-snow">
         {/* 필터 버튼 */}
-        <div className="flex bg-snow/30 rounded-full p-1 mb-4">
+        <div className="flex bg-snow/30 rounded-full p-1 mb-4 max-w-md mx-auto">
           {(["all", "female", "male"] as const).map((g) => (
               <button
                   key={g}
@@ -122,7 +126,7 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
           ))}
         </div>
 
-        <div className="h-[180px] flex flex-col justify-center">
+        <div className="min-h-[160px] flex flex-col justify-center max-w-lg mx-auto">
           {(isLoading || !data || loading) ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <p className="text-center text-snow/80">
@@ -138,27 +142,31 @@ export default function Ratio({loading, currentTemp}: RatioProps) {
               </p>
             </div>
             ) : (
-                <>
+                <div className="space-y-6">
                   {/* 상의 */}
-                    <div className="flex flex-row mb-[24px]">
-                      <div className="text-[20px] font-semibold mr-[25px]">상의</div>
-                      <div className="flex-col text-[20px]">
-                        {data.top.map((item) =>
-                            renderBar(item, item.category === topMax.category)
-                        )}
-                      </div>
+                  <div className="flex flex-row items-start">
+                    <div className="text-lg sm:text-xl font-semibold mr-4 sm:mr-6 min-w-[40px] flex-shrink-0">
+                      상의
                     </div>
+                    <div className="flex-1 space-y-2 min-w-0">
+                      {data.top.map((item) =>
+                          renderBar(item, item.category === topMax.category)
+                      )}
+                    </div>
+                  </div>
 
-                    {/* 하의 */}
-                    <div className="flex flex-row">
-                      <div className="text-[20px] font-semibold mr-[25px]">하의</div>
-                      <div className="flex-col text-[20px]">
-                        {data.bottom.map((item) =>
-                            renderBar(item, item.category === bottomMax.category)
-                        )}
-                      </div>
+                  {/* 하의 */}
+                  <div className="flex flex-row items-start">
+                    <div className="text-lg sm:text-xl font-semibold mr-4 sm:mr-6 min-w-[40px] flex-shrink-0">
+                      하의
                     </div>
-                  </>
+                    <div className="flex-1 space-y-2 min-w-0">
+                      {data.bottom.map((item) =>
+                          renderBar(item, item.category === bottomMax.category)
+                      )}
+                    </div>
+                  </div>
+                </div>
             )
           }
         </div>

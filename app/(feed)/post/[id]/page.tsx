@@ -208,7 +208,7 @@ export default function PostPage() {
   return (
       <div className="flex h-screen">
         <div className={`flex flex-col transition-all duration-300
-                         ${isCommentOpen ? 'w-1/2' : 'w-full'}`}>
+                         ${isCommentOpen ? 'w-1/2 hidden sm:flex' : 'w-full'}`}>
           <div className="flex px-[20px] py-[18px] items-center justify-between">
             <div className="flex flex-row gap-[10px]">
               {post.member.profilePhoto ? (
@@ -269,7 +269,7 @@ export default function PostPage() {
             }
           </div>
 
-          <div className="flex overflow-y-auto">
+          <div className="flex overflow-hidden">
             {post.photo ? (
                 <img
                     src={post.photo}
@@ -317,7 +317,7 @@ export default function PostPage() {
         </div>
 
         {isCommentOpen && (
-            <div className="w-1/2 border-l border-light flex flex-col h-screen">
+            <div className="w-full sm:w-1/2 border-l border-light flex flex-col h-screen">
               <div
                   className="flex items-center justify-between px-[20px] py-[16px] border-b border-light">
                 <h2 className="text-[18px] font-bold">댓글 {commentCount}</h2>

@@ -170,8 +170,8 @@ export default function EditInfoPage () {
   }
 
   return (
-      <div className="flex flex-col px-[45px] h-screen items-center">
-        <div className="absolute top-[30px] right-[20px] z-20">
+      <div className="flex flex-col px-5 h-screen items-center overflow-y-auto">
+        <div className="absolute top-[10px] right-5 z-20">
           <SmallButton onClick={handleComplete}
                        disabled={!nickname ||
                                   (nickname === profile?.nickname &&
@@ -181,7 +181,7 @@ export default function EditInfoPage () {
             저장
           </SmallButton>
         </div>
-        <div onClick={handleImageClick} className="group relative flex flex-col mt-[42px] mb-[24px] cursor-pointer">
+        <div onClick={handleImageClick} className="group relative flex flex-col mt-[42px] mb-6 cursor-pointer flex-shrink-0">
           {profilePhotoURL ? (
               <div className="w-[145px] h-[145px] rounded-full overflow-hidden">
                 <img
@@ -203,7 +203,7 @@ export default function EditInfoPage () {
             src="/SelectPhoto.png"
             width={35}
             height={35}
-            className="absolute bottom-0 right-0 group-hover:brightness-75 transition-all duration-100 ease-in-out"
+            className="absolute bottom-0 right-0 group-hover:brightness-75 transition-all duration-100"
           />
         </div>
         <textarea
@@ -212,10 +212,12 @@ export default function EditInfoPage () {
             onChange={(e) => setNickname(e.target.value)}
             maxLength={14}
             rows={1}
-            className="text-base text-xl text-center w-full
-                       mb-[47px] p-[4px]
-                       border-b-[2px] border-light resize-none focus:outline-none" />
-        <div className="flex flex-col gap-[14px] mb-[50px]">
+            className="text-base text-xl text-center w-full max-w-[303px]
+                       mb-12 p-1
+                       border-b-2 border-light resize-none focus:outline-none
+                       flex-shrink-0"
+        />
+        <div className="flex flex-col gap-[14px] mb-12 flex-shrink-0">
           <div className="text-[16px] items-center">성별</div>
           <div className="flex items-center gap-[40px]">
             {GENDER_LIST.map((gender) => (
@@ -243,16 +245,19 @@ export default function EditInfoPage () {
           </div>
         </div>
         {!isGoogleUser() && (
-            <ProfileButton onClick={onPasswordClick} className="min-w-[257px]">
-              <>
-                <img
-                    src="/Lock.png"
-                    width={35}
-                    height={35}
-                />
-                비밀번호 변경
-              </>
-            </ProfileButton>
+            <div className="flex-shrink-0">
+              <ProfileButton onClick={onPasswordClick} className="min-w-[257px]">
+                <>
+                  <img
+                      src="/Lock.png"
+                      width={35}
+                      height={35}
+                      alt="비밀번호 변경"
+                  />
+                  비밀번호 변경
+                </>
+              </ProfileButton>
+            </div>
         )}
       </div>
   );
