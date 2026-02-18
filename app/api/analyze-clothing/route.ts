@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import vision from '@google-cloud/vision';
 
 // 서버사이드에서만 실행됨
-const client = new vision.ImageAnnotatorClient({
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
-});
+const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON!);
+const client = new vision.ImageAnnotatorClient({ credentials });
 
 export async function POST(request: NextRequest) {
   try {

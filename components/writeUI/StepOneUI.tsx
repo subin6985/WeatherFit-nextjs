@@ -22,6 +22,8 @@ export default function StepOneUI({file, setFile, onComplete}: StepOneUIProps) {
       return;
     }
 
+    setDisable(false);
+
     const img = new Image();
     img.src = URL.createObjectURL(file);
 
@@ -52,7 +54,6 @@ export default function StepOneUI({file, setFile, onComplete}: StepOneUIProps) {
         return;
       }
       setFile(selectedFile);
-      setDisable(false);
     }
   }
 

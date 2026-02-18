@@ -47,7 +47,7 @@ export default function EditPage() {
 
       if (data.memberId !== user?.uid) {
         alert("본인이 작성한 글만 수정할 수 있습니다.");
-        router.push(`/post/${id}`);
+        router.replace(`/post/${id}`);
         return;
       }
 

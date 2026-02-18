@@ -17,7 +17,7 @@ export default function FeedLayout({children}) {
   const handleBackClick = () => {
     // write 페이지 1단계
     if (currentPage === 'write' && step === 1) {
-      router.push('/feed');
+      router.replace('/feed');
       return;
     }
 

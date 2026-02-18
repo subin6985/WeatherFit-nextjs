@@ -171,7 +171,7 @@ export default function PostPage() {
       const result = await deletePost(id, user?.uid);
 
       if (result) {
-        router.push("/feed");
+        router.replace("/feed");
       }
     } catch (e) {
       console.error("삭제 실패:", e);
