@@ -48,6 +48,7 @@ export default function PostPage() {
 
         const postData = await getPostById(id, user?.uid);
         setPost(postData);
+        setLikes(postData.likes);
       } catch (e) {
         setError(e instanceof Error ? e.message : '게시글을 불러오지 못했습니다.');
       } finally {
