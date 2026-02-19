@@ -44,12 +44,15 @@ export interface UpdatePostData {
 }
 
 export const createPost = async (data: CreatePostData): Promise<string> => {
+  let uploadedPhotoRef: any = null;
+
   try {
     const { file, content, temp, tempRange, region, outfitDate, userId, gender } = data;
 
     console.log('1. 이미지 업로드 시작...');
     const storageRef = ref(storage, `posts/${userId}/${Date.now()}`);
     await uploadBytes(storageRef, file);
+    uploadedPhotoRef = storageRef;
     const photoURL = await getDownloadURL(storageRef);
     console.log('2. 이미지 업로드 완료:', photoURL);
 
@@ -90,6 +93,16 @@ export const createPost = async (data: CreatePostData): Promise<string> => {
     return docRef.id;
   } catch (error) {
     console.error("게시글 작성 실패:", error);
+
+    // 에러 발생 시 업로드된 이미지 삭제
+    if (uploadedPhotoRef) {
+      try {
+        await deleteObject(uploadedPhotoRef);
+      } catch (deleteError) {
+        console.error('이미지 삭제 실패:', deleteError);
+      }
+    }
+
     if (error instanceof Error) {
       throw error;
     }
