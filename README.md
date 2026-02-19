@@ -254,6 +254,9 @@ weather-outfit/
 │   │   │   ├── finish-google/    # 소셜 회원가입 마무리 (닉네임, 성별 설정)
 │   │   │   └── layout.tsx        # 로그인 Layout
 │   ├── api/                      # API Routes
+│   │   ├── invalidate-verification/    # 인증 코드 무효화
+│   │   ├── send-verification/    # 인증 코드 발송
+│   │   ├── verify-code/          # 인증 코드 검증
 │   │   └── analyze-clothing/     # Google Vision AI
 │   └── layout.tsx                # Root Layout
 │
@@ -270,7 +273,6 @@ weather-outfit/
 │   ├── ProfileButton             # 프로필 아이콘
 │   ├── Ratio.tsx                 # 통계 컴포넌트
 │   └── WeatherClient.tsx         # 현재 날씨 별 메인 페이지 커스텀
-├── functions/                    # resend (이메일로 인증코드 전송)
 ├── lib/                          # 유틸리티 & 서비스
 │   ├── services/                 # 비즈니스 로직
 │   │   ├── aiClothingService.ts
@@ -279,6 +281,7 @@ weather-outfit/
 │   │   ├── commentService.ts
 │   │   ├── notificationService.ts
 │   │   └── postService.ts
+│   ├── email.ts                  # 보안 코드 발송 유틸
 │   ├── firebase.ts               # Firebase 설정
 │   └── weatherUtils.ts           # 날씨 유틸
 │

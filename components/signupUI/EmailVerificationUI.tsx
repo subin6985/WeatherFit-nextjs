@@ -2,11 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import {useEffect, useState} from "react";
-import { httpsCallable } from "firebase/functions";
 import Input from "../baseUI/Input";
 import SmallButton from "../baseUI/SmallButton";
 import Button from "../baseUI/Button";
-import {functions} from "../../lib/firebase";
 import {useAuthStore} from "../../store/useAuthStore";
 
 interface EmailVerificationUIProps {
@@ -49,15 +47,26 @@ export default function EmailVerificationUI({
 
   const handleEmailButton = async () => {
     if (sent) {
-      setEmail("");
-      setSent(false);
-      setCode("");
-      setCodeError(false);
-      setComplete(false);
-
       try {
-        const invalidate = httpsCallable(functions, 'invalidateVerification');
-        await invalidate({ email });
+        const response = await fetch('/api/invalidate-verification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        })
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert(data.message);
+
+          setEmail("");
+          setSent(false);
+          setCode("");
+          setCodeError(false);
+          setComplete(false);
+        } else {
+          alert(data.error);
+        }
       } catch (err) {
         console.error("이메일 무효화 실패:", err);
       }
@@ -71,19 +80,25 @@ export default function EmailVerificationUI({
 
     try {
       setLoading(true);
-      const sendCode = httpsCallable(functions, 'sendVerificationCode');
-      await sendCode({ email });
 
-      setEmailError(false);
-      setSent(true);
+      const response = await fetch('/api/send-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+
+        setEmailError(false);
+        setSent(true);
+      } else {
+        alert(data.error);
+      }
     } catch (err) {
       console.error("이메일 전송 실패:", err);
-      setEmailError(true);
-
-      if (err.code === "functions/already-exists") {
-        alert("이미 가입된 이메일입니다.");
-      }
-      else alert(err.message || '이메일 전송에 실패했습니다.');
     } finally {
       setLoading(false);
     }
@@ -97,23 +112,26 @@ export default function EmailVerificationUI({
 
     try {
       setLoading(true);
-      const verify = httpsCallable(functions, 'verifyCode');
-      await verify({ email, code });
 
-      setCodeError(false);
-      setComplete(true);
+      const response = await fetch('/api/verify-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCodeError(false);
+        setComplete(true);
+      } else {
+        setCodeError(true);
+        alert(data.error);
+      }
     } catch (err) {
       console.error("코드 검증 실패:", err);
       setCodeError(true);
       setComplete(false);
-
-      if (err.code === 'functions/deadline-exceeded') {
-        alert('인증 코드가 만료되었습니다. 새로운 코드를 요청해주세요.');
-      } else if (err.code === 'functions/invalid-argument') {
-        alert('인증 코드가 일치하지 않습니다.');
-      } else {
-        alert(err.message || '코드 검증에 실패했습니다.');
-      }
     } finally {
       setLoading(false);
     }
