@@ -144,6 +144,8 @@ export default function StepTwoUI({
 
       alert("게시글이 작성되었습니다!");
 
+      // window 히스토리 직접 조작
+      window.history.replaceState(null, '', `/post/${postId}`);
       router.replace(`/post/${postId}`);
     } catch (error) {
       console.error("게시글 작성 실패:", error);
