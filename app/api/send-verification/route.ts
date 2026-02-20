@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail, generateVerificationCode } from '../../../lib/email';
 import { db } from '../../../lib/firebase';
-import { doc, setDoc, Timestamp } from 'firebase/firestore';
-import { auth } from '../../../lib/firebase';
-import { fetchSignInMethodsForEmail } from 'firebase/auth';
+import {collection, doc, getDocs, query, setDoc, Timestamp, where} from 'firebase/firestore';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,16 +16,15 @@ export async function POST(request: NextRequest) {
     }
 
     // 이메일 중복 체크
-    try {
-      const methods = await fetchSignInMethodsForEmail(auth, email);
-      if (methods.length > 0) {
-        return NextResponse.json(
-            { error: '이미 가입된 이메일입니다.' },
-            { status: 400 }
-        );
-      }
-    } catch (error) {
-      console.error('이메일 중복 체크 실패:', error);
+    const userSnapshot = await getDocs(
+        query(collection(db, 'users'), where('email', '==', email))
+    );
+
+    if (!userSnapshot.empty) {
+      return NextResponse.json(
+          { error: '이미 가입된 이메일입니다.' },
+          { status: 409 }
+      );
     }
 
     // 인증 코드 생성
