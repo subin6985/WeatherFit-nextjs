@@ -1,7 +1,8 @@
 # 🌡️ 날씨 기반 옷차림 공유 플랫폼
 
 > [WeatherFit](https://weather-fit-nextjs.vercel.app)  
-> "오늘 같은 날씨에는 뭐 입지?" - 실제 날씨 데이터와 AI 분석 기반 옷차림 추천 및 공유 서비스
+> "오늘 같은 날씨에는 뭐 입지?" - 실제 날씨 데이터와 AI 분석 기반 옷차림 추천 및 공유 서비스  
+> [블로그 회고록](https://fullstackdiary.tistory.com/27)
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
