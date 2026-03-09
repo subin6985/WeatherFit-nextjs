@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { createReply, deleteComment } from '../../lib/services/commentService';
 import { CommentWithReplies } from '../../types';
+import Image from 'next/image';
 
 interface CommentItemProps {
   comment: CommentWithReplies;
@@ -82,22 +83,26 @@ export default function CommentItem({ comment, postId, onUpdate }: CommentItemPr
             // 삭제된 댓글
             <div className="w-9 h-9 rounded-full bg-light" />
         ) : comment.userPhoto ? (
-          <img
-            src={comment.userPhoto}
-            alt={comment.userName}
-            className="w-9 h-9 rounded-full object-cover"
-          />
+            <div className="relative w-9 h-9 rounded-full overflow-hidden flex-shrink-0">
+              <Image
+                  src={comment.userPhoto}
+                  alt={comment.userName}
+                  fill
+                  sizes="36px"
+                  className="object-cover"
+              />
+            </div>
         ) : (
-          <div className="w-9 h-9 rounded-full bg-light" />
+            <div className="w-9 h-9 rounded-full bg-light"/>
         )}
 
         <div className="flex-1">
           {comment.isDeleted ? (
-            <div>
-              <p className="text-sm text-middle italic">
-                삭제된 댓글입니다.
-              </p>
-              {comment.replyCount > 0 && (
+              <div>
+                <p className="text-sm text-middle italic">
+                  삭제된 댓글입니다.
+                </p>
+                {comment.replyCount > 0 && (
                   <span className="text-[12px] text-middle mt-2 block
                                    cursor-pointer hover:underline hover:brightness-75"
                         onClick={() => setIsReplyOpen(prev => !prev)}>
@@ -186,13 +191,17 @@ export default function CommentItem({ comment, postId, onUpdate }: CommentItemPr
           {comment.replies.map(reply => (
             <div key={reply.id} className="flex gap-[12px]">
               {reply.userPhoto ? (
-                <img
-                  src={reply.userPhoto}
-                  alt={reply.userName}
-                  className="w-[32px] h-[32px] rounded-full object-cover"
-                />
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                    <Image
+                        src={reply.userPhoto}
+                        alt={reply.userName}
+                        fill
+                        sizes="32px"
+                        className="object-cover"
+                    />
+                  </div>
               ) : (
-                <div className="w-[32px] h-[32px] rounded-full bg-light" />
+                  <div className="w-[32px] h-[32px] rounded-full bg-light"/>
               )}
 
               <div className="flex-1">

@@ -1,6 +1,7 @@
 import { subscribeChatRooms } from "../../lib/services/chatService";
 import {useEffect, useState} from "react";
 import {useAuthStore} from "../../store/useAuthStore";
+import Image from "next/image";
 
 export default function ChatIcon({onClick}) {
   const { user } = useAuthStore.getState();
@@ -24,7 +25,13 @@ export default function ChatIcon({onClick}) {
   return (
       <div className="relative">
         <button onClick={onClick}>
-          <img src="/Chat.png" alt="Chat" className="w-[35px] h-[35px]"/>
+          <Image
+              src="/Chat.png"
+              alt="Chat"
+              width={35}
+              height={35}
+              sizes="35px"
+          />
           {unreadCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-warning text-snow text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {unreadCount > 99 ? '99+' : unreadCount}

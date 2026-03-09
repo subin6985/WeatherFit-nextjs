@@ -21,6 +21,7 @@ import {updateProfile} from "firebase/auth";
 import SmallButton from "../../../../components/baseUI/SmallButton";
 import ProfileButton from "../../../../components/ProfileButton";
 import {recalculateStats} from "../../../../lib/services/clothingStatsService";
+import Image from "next/image";
 
 export default function EditInfoPage () {
   const { user } = useAuthStore.getState();
@@ -184,9 +185,13 @@ export default function EditInfoPage () {
         <div onClick={handleImageClick} className="group relative flex flex-col mt-[42px] mb-6 cursor-pointer flex-shrink-0">
           {profilePhotoURL ? (
               <div className="w-[145px] h-[145px] rounded-full overflow-hidden">
-                <img
+                <Image
                     src={profilePhotoURL}
-                    className="w-full h-full object-cover"
+                    alt="프로필 이미지"
+                    fill
+                    className="rounded-full object-cover"
+                    sizes="145px"
+                    priority
                 />
               </div>
           ) : (
@@ -199,10 +204,12 @@ export default function EditInfoPage () {
               onChange={handleFileChange}
               className="hidden"
           />
-          <img
+          <Image
             src="/SelectPhoto.png"
+            alt="선택 이미지"
             width={35}
             height={35}
+            sizes="35px"
             className="absolute bottom-0 right-0 group-hover:brightness-75 transition-all duration-100"
           />
         </div>
@@ -248,10 +255,11 @@ export default function EditInfoPage () {
             <div className="flex-shrink-0">
               <ProfileButton onClick={onPasswordClick} className="min-w-[257px]">
                 <>
-                  <img
+                  <Image
                       src="/Lock.png"
                       width={35}
                       height={35}
+                      sizes="35px"
                       alt="비밀번호 변경"
                   />
                   비밀번호 변경

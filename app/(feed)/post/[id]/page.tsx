@@ -12,6 +12,7 @@ import {subscribeCommentCount} from "../../../../lib/services/commentService";
 import {useCommentStore} from "../../../../store/useCommentStore";
 import ChatButton from "../../../../components/chat/ChatButton";
 import {useDebounce} from "../../../../hooks/useDebounce";
+import NextImage from "next/image";
 
 export default function PostPage() {
   const { id } = useParams<{ id: string }>();
@@ -224,11 +225,13 @@ export default function PostPage() {
           <div className="flex px-[20px] py-[18px] items-center justify-between">
             <div className="flex flex-row gap-[10px]">
               {post.member.profilePhoto ? (
-                  <div className="w-[52px] h-[52px] rounded-full overflow-hidden">
-                    <img
+                  <div className="relative w-[52px] h-[52px] rounded-full overflow-hidden">
+                    <NextImage
                         src={post.member.profilePhoto}
                         alt={post.member.nickname}
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="52px"
+                        className="object-cover"
                     />
                   </div>
               ) : (
@@ -245,15 +248,16 @@ export default function PostPage() {
               (post.member.memberId === user?.uid) ? (
                   <div className="flex justify-end" ref={menuRef}>
                     <button onClick={() => setOpenMenu(prev => !prev)}>
-                      <img
+                      <NextImage
                         src="/Kebab-Menu.png"
                         alt="menu"
                         width={36}
                         height={36}
+                        sizes="36px"
                       />
                     </button>
                     {openMenu && (
-                        <div className="absolute mt-[40px]
+                        <div className="absolute mt-[40px] z-10
                               flex flex-col w-[60px] p-[5px] shadow-[2px_2px_4px_rgba(0,0,0,0.25)]
                               bg-white border-[1px] border-light rounded-[10px]">
                           <button
@@ -283,14 +287,18 @@ export default function PostPage() {
 
           <div className="flex overflow-hidden">
             {post.photo ? (
-                <img
-                    src={post.photo}
-                    alt="포스트 이미지"
-                    className="w-full object-cover"
-                    style={{ height: `${imageHeight}px` }}
-                />
+                <div className="relative w-full" style={{height: `${imageHeight}px`}}>
+                  <NextImage
+                      src={post.photo}
+                      alt="포스트 이미지"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw" // 반응형에 맞게 사이즈 조절
+                      className="object-cover"
+                      priority
+                  />
+                </div>
             ) : (
-                <div className="w-full h-[393px] bg-light" />
+                <div className="w-full h-[393px] bg-light"/>
             )}
           </div>
 
@@ -300,11 +308,12 @@ export default function PostPage() {
                 disabled={isToggling}
                 className="flex items-center gap-[10px] text-base text-[14px]"
             >
-              <img
+              <NextImage
                   src={isLikedByMe ? '/Heart-full.png' : '/Heart.png'}
                   alt="좋아요"
                   width={30}
                   height={30}
+                  sizes="30px"
               />
               {likes}
             </button>
@@ -313,11 +322,12 @@ export default function PostPage() {
               onClick={toggleComment}
               className="flex items-center gap-[8px] text-base text-[14px]"
             >
-              <img
+              <NextImage
                 src="/Comment.png"
                 alt="댓글"
                 width={30}
                 height={30}
+                sizes="30px"
               />
               <span>{commentCount}</span>
             </button>
@@ -337,7 +347,13 @@ export default function PostPage() {
                     onClick={() => setIsCommentOpen(false)}
                     className="p-[4px] hover:bg-snow rounded"
                 >
-                  <img src="/Close.png" alt="닫기" width={24} height={24}/>
+                  <NextImage
+                      src="/Close.png"
+                      alt="닫기"
+                      width={24}
+                      height={24}
+                      sizes="24px"
+                  />
                 </button>
               </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import {useRouter} from "next/navigation";
+import Image from "next/image";
 
 export default function SignupLayout({children}) {
   const router = useRouter();
@@ -12,22 +13,23 @@ export default function SignupLayout({children}) {
   return (
       <div className="flex flex-col relative h-screen justify-center items-center">
         <button onClick={returnToLogin} className="absolute left-[20px] top-[50px]">
-          <img
+          <Image
               src="/Return.png"
               alt="Return"
               width={40}
               height={40}
-              className="w-[40px] h-auto"
+              sizes="40px"
           />
         </button>
 
         <button onClick={returnToLogin}>
-          <img
+          <Image
               src="/WeatherFit.png"
               alt="WeatherFit Logo"
               width={227}
               height={100}
-              className="w-[227px] h-auto mb-[56px]"
+              className="mb-[56px]"
+              sizes="227px"
           />
         </button>
 

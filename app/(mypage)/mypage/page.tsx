@@ -8,6 +8,7 @@ import {useAuthStore} from "../../../store/useAuthStore";
 import {useNavigationStore} from "../../../store/useNavigationStore";
 import ProfileButton from "../../../components/ProfileButton";
 import {useRouter} from "next/navigation";
+import Image from "next/image";
 
 export default function MyPage() {
   const { user } = useAuthStore.getState();
@@ -77,10 +78,14 @@ export default function MyPage() {
       <div className="flex flex-col px-[45px] h-screen items-center">
         <div className="mt-[42px] mb-[24px] flex-shrink-0">
           {profile?.profilePhoto ? (
-              <div className="w-[145px] h-[145px] rounded-full overflow-hidden">
-                <img
+              <div className="relative w-[145px] h-[145px] rounded-full overflow-hidden">
+                <Image
                     src={profile?.profilePhoto}
-                    className="w-full h-full object-cover"
+                    alt={profile?.nickname}
+                    fill
+                    className="object-cover"
+                    sizes="145px"
+                    priority
                 />
               </div>
           ) : (
@@ -94,33 +99,36 @@ export default function MyPage() {
         <div className="flex flex-col gap-[19px] flex-shrink-0">
           <ProfileButton onClick={onInfoClick}>
             <>
-              <img
+              <Image
                   src="/Info.png"
                   width={35}
                   height={35}
                   alt="내 정보"
+                  sizes="35px"
               />
               내 정보 수정
             </>
           </ProfileButton>
           <ProfileButton onClick={onPostClick}>
             <>
-              <img
+              <Image
                   src="/Post.png"
                   width={35}
                   height={35}
                   alt="내가 쓴 게시글"
+                  sizes="35px"
               />
               내가 쓴 게시글
             </>
           </ProfileButton>
           <ProfileButton onClick={onLikeClick}>
             <>
-              <img
+              <Image
                   src="/Like.png"
                   width={35}
                   height={35}
                   alt="내가 좋아요 한 게시글"
+                  sizes="35px"
               />
               내가 좋아요 한 게시글
             </>

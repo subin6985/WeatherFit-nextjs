@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { PostSummary } from '../../types';
+import Image from "next/image";
 
 interface FeedCardProps {
   feed: PostSummary;
@@ -17,13 +18,15 @@ export default function FeedCard({ feed }: FeedCardProps) {
   return (
       <button className="w-[127px] overflow-hidden" onClick={handleClick}>
         {feed.photo ? (
-            <img
-                src={feed.photo}
-                alt="피드 이미지"
-                width={127}
-                height={127}
-                className="w-full h-[127px] object-cover"
-            />
+            <div className="w-[127px] h-[127px] relative">
+              <Image
+                  src={feed.photo}
+                  alt="피드 이미지"
+                  sizes="127px"
+                  fill
+                  className="object-cover"
+              />
+            </div>
         ) : (
             <div className="w-full h-[127px] bg-light" />
         )}

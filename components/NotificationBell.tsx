@@ -5,6 +5,7 @@ import {useAuthStore} from "../store/useAuthStore";
 import {subscribeNotifications, markAsRead, markAllAsRead, Notification} from "../lib/services/notificationService";
 import {useRouter} from "next/navigation";
 import {useCommentStore} from "../store/useCommentStore";
+import Image from "next/image";
 
 export default function NotificationBell() {
   const { user } = useAuthStore.getState();
@@ -48,7 +49,13 @@ export default function NotificationBell() {
             onClick={() => setIsOpen(!isOpen)}
             className="relative p-0"
         >
-          <img src="/Bell.png" alt="알림" width={40} height={40} />
+          <Image
+              src="/Bell.png"
+              alt="알림"
+              width={40}
+              height={40}
+              sizes="40px"
+          />
           {unreadCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-warning text-snow text-xs rounded-full w-5 h-5 flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -85,10 +92,13 @@ export default function NotificationBell() {
                       >
                         <div className="flex items-start gap-3">
                           {notification.senderPhoto ? (
-                              <img
+                              <Image
                                   src={notification.senderPhoto}
                                   alt={notification.senderName}
-                                  className="w-10 h-10 rounded-full"
+                                  width={10}
+                                  height={10}
+                                  className="rounded-full"
+                                  sizes="10px"
                               />
                           ) : (
                               <div className="w-10 h-10 rounded-full bg-light" />

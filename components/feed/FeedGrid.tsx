@@ -7,6 +7,7 @@ import FeedCard from './FeedCard';
 import GenderFilter from '../filter/GenderFilter';
 import TempFilter from '../filter/TempFilter';
 import { Gender, PostSummary, TempRange } from '../../types';
+import Image from "next/image";
 
 interface FeedGridProps {
   title?: string;
@@ -178,7 +179,13 @@ export default function FeedGrid({
                             hover:scale-95 transition-all duration-100 ease-in-out"
                 onClick={() => router.push('/write')}
             >
-              <img src="/Add.png" alt="글쓰기" width={40} height={40}/>
+              <Image
+                  src="/Add.png"
+                  alt="글쓰기"
+                  width={40}
+                  height={40}
+                  sizes="40px"
+              />
             </button>
         )}
 

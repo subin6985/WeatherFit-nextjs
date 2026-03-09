@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from "../../store/useAuthStore";
 import { useChatStore } from "../../store/useChatStore";
 import {subscribeChatRooms, ChatRoom, checkUserExists} from "../../lib/services/chatService";
+import Image from "next/image";
 
 interface ChatRoomWithStatus extends ChatRoom {
   isOtherUserDeleted?: boolean;
@@ -75,7 +76,13 @@ export default function ChatListModal() {
               onClick={closeChatList}
               className="p-2 hover:bg-light rounded"
             >
-              <img src="/Close.png" alt="닫기" width={24} height={24} />
+              <Image
+                  src="/Close.png"
+                  alt="닫기"
+                  width={24}
+                  height={24}
+                  sizes="24px"
+              />
             </button>
           </div>
 
@@ -98,11 +105,13 @@ export default function ChatListModal() {
                           className="flex items-center gap-3 p-4 hover:bg-gray-200 cursor-pointer"
                         >
                           {(otherUser.photo && !room.isOtherUserDeleted) ? (
-                              <div className="w-12 h-12 rounded-full overflow-hidden">
-                                <img
+                              <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                                <Image
                                     src={otherUser.photo}
                                     alt={otherUser.name}
-                                    className="w-full h-full object-cover"
+                                    fill
+                                    sizes="48px"
+                                    className="object-cover"
                                 />
                               </div>
                           ) : (

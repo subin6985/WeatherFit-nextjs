@@ -2,6 +2,7 @@
 
 import {useEffect, useRef, useState} from "react";
 import SmallButton from "../baseUI/SmallButton";
+import NextImage from "next/image";
 
 interface StepOneUIProps {
   file: File | null;
@@ -83,17 +84,20 @@ export default function StepOneUI({file, setFile, onComplete}: StepOneUIProps) {
           style={{ height: `${imageHeight}px` }}
         >
           {file ? (
-              <img
+              <NextImage
                 src={URL.createObjectURL(file)}
                 alt="첨부할 이미지"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
           ) : (
               <div className="flex flex-col items-center">
-                <img
+                <NextImage
                     src="/Add_circle.png"
                     alt="이미지 첨부"
-                    className="w-[65px] h-[65px] group-hover:scale-95 transition-all duration-100 ease-in-out"
+                    width={65}
+                    height={65}
+                    className="group-hover:scale-95 transition-all duration-100 ease-in-out"
                 />
               </div>
           )}

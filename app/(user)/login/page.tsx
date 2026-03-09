@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "../../../store/useAuthStore"
 import Input from "../../../components/baseUI/Input";
 import Button from "../../../components/baseUI/Button";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -84,22 +85,23 @@ export default function LoginPage() {
             onClick={returnToMain}
             className="absolute left-5 top-[50px]"
         >
-          <img
+          <Image
               src="/Return.png"
               alt="Return"
               width={40}
               height={40}
-              className="w-[40px] h-auto"
+              sizes="40px"
           />
         </button>
 
         <button onClick={returnToMain} className="mb-[56px]">
-          <img
+          <Image
               src="/WeatherFit.png"
               alt="WeatherFit Logo"
               width={227}
               height={100}
-              className="w-[227px] h-auto"
+              sizes="227px"
+              priority
           />
         </button>
 
@@ -135,25 +137,14 @@ export default function LoginPage() {
 
         <div className="mt-[17px] flex flex-row justify-center gap-[25px]">
           <button onClick={handleGoogleLogin} disabled={loading}>
-            <img
+            <Image
                 src="/Google.png"
                 alt="Google Login"
                 width={35}
                 height={35}
-                className="w-[35px] h-auto"
+                sizes="35px"
             />
           </button>
-          {/* 카카오 로그인은 추후 구현
-          <button disabled>
-            <img
-                src="/Kakao.png"
-                alt="Kakao Login"
-                width={35}
-                height={35}
-                className="w-[35px] h-auto opacity-50"
-            />
-          </button>
-          */}
         </div>
 
         <button

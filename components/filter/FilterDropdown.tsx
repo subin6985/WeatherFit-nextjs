@@ -1,6 +1,7 @@
 'use client';
 
 import {useState, ReactNode, useRef, useEffect} from 'react';
+import Image from "next/image";
 
 interface FilterDropdownProps {
   label: string;
@@ -34,13 +35,17 @@ export default function FilterDropdown({ label, children }: FilterDropdownProps)
             onClick={() => setIsOpen(prev => !prev)}
         >
           {label}
-          <img
-              src="/Down.png"
-              alt="드롭다운"
-              width={19}
-              height={19}
-              className="absolute top-1/2 -translate-y-1/2 left-[73px]"
-          />
+          <span className={`absolute right-2 top-1/2 -translate-y-1/2
+                        transition-transform duration-300 ease-in-out
+                        ${isOpen ? 'rotate-180' : 'rotate-0'}`}>
+            <Image
+                src="/Down.png"
+                alt="드롭다운"
+                width={19}
+                height={19}
+                className="object-contain"
+            />
+          </span>
         </button>
         {isOpen && (
             <div className="absolute bg-white rounded-[10px]

@@ -9,6 +9,7 @@ import { useAuthStore } from "../../store/useAuthStore";
 import SmallButton from "../baseUI/SmallButton";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
+import Image from "next/image";
 
 interface StepTwoUIProps {
   file: File | null;
@@ -183,7 +184,17 @@ export default function StepTwoUI({
               <span className={outfitRegion ? "text-base" : "text-middle"}>
                 {outfitRegion || "지역 선택"}
               </span>
-                <img src="/Down.png" alt="드롭다운" width={16} height={16} />
+                <span className={`absolute right-2 top-1/2 -translate-y-1/2
+                        transition-transform duration-300 ease-in-out
+                        ${openRegionDropdown ? 'rotate-180' : 'rotate-0'}`}>
+                  <Image
+                      src="/Down.png"
+                      alt="드롭다운"
+                      width={16}
+                      height={16}
+                      sizes="16px"
+                  />
+                </span>
               </button>
 
               {openRegionDropdown && (

@@ -9,6 +9,7 @@ import { useAuthStore } from "../../../../../store/useAuthStore";
 import SmallButton from "../../../../../components/baseUI/SmallButton";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../../../../lib/firebase";
+import Image from "next/image";
 
 export default function EditPage() {
   const router = useRouter();
@@ -199,7 +200,13 @@ export default function EditPage() {
               <span className={outfitRegion ? "text-base" : "text-middle"}>
                 {outfitRegion || "지역 선택"}
               </span>
-                <img src="/Down.png" alt="드롭다운" width={16} height={16} />
+                <Image
+                    src="/Down.png"
+                    alt="드롭다운"
+                    width={16}
+                    height={16}
+                    sizes="16px"
+                />
               </button>
 
               {openRegionDropdown && (

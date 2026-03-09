@@ -9,6 +9,7 @@ import {useNavigationStore} from "../store/useNavigationStore";
 import NotificationBell from "./NotificationBell";
 import {useChatStore} from "../store/useChatStore";
 import ChatIcon from "./chat/ChatIcon";
+import Image from 'next/image';
 
 type WeatherBackground = "bg-sunny" | "bg-cloudy" | "bg-snowy" | "bg-rainy";
 
@@ -137,17 +138,35 @@ export default function WeatherClient() {
           </div>
           <div className="flex flex-col gap-[13px] flex-shrink-0">
             <button onClick={handleFeedButton}>
-              <img src="/Feed.png" alt="Feed" className="w-[40px] h-[40px]" />
+              <Image
+                  src="/Feed.png"
+                  alt="Feed"
+                  width={40}
+                  height={40}
+                  sizes="40px"
+              />
             </button>
             <button onClick={handleLoginButton}>
-              <img src="/User.png" alt="User" className="w-[40px] h-[40px]" />
+              <Image
+                  src="/User.png"
+                  alt="User"
+                  width={40}
+                  height={40}
+                  sizes="40px"
+              />
             </button>
             {isLoggedIn && (
                 <>
                   <NotificationBell />
                   <ChatIcon onClick={openChatList} />
                   <button onClick={handleLogoutButton}>
-                    <img src="/Logout.svg" alt="Logout" className="w-[40px] h-[40px]" />
+                    <Image
+                        src="/Logout.svg"
+                        alt="Logout"
+                        width={40}
+                        height={40}
+                        sizes="40px"
+                    />
                   </button>
                 </>
             )}

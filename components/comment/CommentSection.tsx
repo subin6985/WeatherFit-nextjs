@@ -5,6 +5,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { getComments, createComment } from '../../lib/services/commentService';
 import { CommentWithReplies } from '../../types';
 import CommentItem from './CommentItem';
+import Image from 'next/image';
 
 interface CommentSectionProps {
   postId: string;
@@ -82,10 +83,13 @@ export default function CommentSection({ postId, postAuthorId }: CommentSectionP
         {user && (
             <div className="flex gap-[12px] items-start border-t border-light pt-[16px]">
               {user.photoURL ? (
-                  <img
+                  <Image
                       src={user.photoURL}
                       alt={user.displayName || '프로필'}
-                      className="w-[36px] h-[36px] rounded-full object-cover"
+                      width={36}
+                      height={36}
+                      sizes="36px"
+                      className="rounded-full object-cover"
                   />
               ) : (
                   <div className="w-[36px] h-[36px] rounded-full bg-light" />

@@ -10,6 +10,7 @@ import {
   markMessagesAsRead,
   ChatMessage, getOtherUserInfo,
 } from '../../lib/services/chatService';
+import Image from "next/image";
 
 interface ChatRoomModalProps {
   roomId: string;
@@ -262,11 +263,13 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
                     <div className={`flex gap-2 max-w-[70%] ${isMyMessage ? 'flex-row-reverse' : 'flex-row'}`}>
                       {!isMyMessage && (
                           (msg.senderPhoto && !isOtherUserDeleted) ? (
-                              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                                <img
+                              <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                                <Image
                                     src={msg.senderPhoto}
                                     alt={msg.senderName}
-                                    className="w-full h-full object-cover"
+                                    fill
+                                    sizes="32px"
+                                    className="object-cover"
                                 />
                               </div>
                           ) : (

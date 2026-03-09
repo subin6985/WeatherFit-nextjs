@@ -3,6 +3,7 @@
 import {useRouter} from "next/navigation";
 import {useNavigationStore} from "../../store/useNavigationStore";
 import {useEffect} from "react";
+import Image from "next/image";
 
 export default function MypageLayout({children}) {
   const router = useRouter();
@@ -22,7 +23,13 @@ export default function MypageLayout({children}) {
             onClick={handleBackClick}
             className="absolute left-[20px] top-[10px] z-20"
         >
-          <img src="/Return.png" alt="뒤로가기" width={40} height={40}/>
+          <Image
+              src="/Return.png"
+              alt="뒤로가기"
+              width={40}
+              height={40}
+              sizes="40px"
+          />
         </button>
         <div className="w-full h-[60px] bg-white shadow-[0px_2px_5px_rgba(0,0,0,0.1)] shrink-0 z-10"/>
 
