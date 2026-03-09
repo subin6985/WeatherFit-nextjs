@@ -15,6 +15,8 @@ export default function StepOneUI({file, setFile, onComplete}: StepOneUIProps) {
   const [disable, setDisable] = useState(true);
   const [imageHeight, setImageHeight] = useState<number>(393); // 기본 높이
 
+  const MAX_SIZE = 2 * 1024 * 1024;
+
   // 이미지 크기 계산
   useEffect(() => {
     if (!file) {
@@ -53,6 +55,12 @@ export default function StepOneUI({file, setFile, onComplete}: StepOneUIProps) {
         alert("이미지 파일만 업로드할 수 있습니다.");
         return;
       }
+
+      if (selectedFile.size > MAX_SIZE) {
+        alert("이미지는 2MB 이하만 업로드할 수 있습니다.");
+        return;
+      }
+
       setFile(selectedFile);
     }
   }
