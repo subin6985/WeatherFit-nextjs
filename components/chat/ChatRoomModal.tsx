@@ -11,6 +11,7 @@ import {
   ChatMessage, getOtherUserInfo,
 } from '../../lib/services/chatService';
 import Image from "next/image";
+import { useDebounce } from "../../hooks/useDebounce";
 
 interface ChatRoomModalProps {
   roomId: string;
@@ -50,6 +51,19 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
 
     loadOtherUserInfo();
   }, [roomId, user]);
+
+  // Debounce 적용된 타이핑 중지
+  const stopTyping = useDebounce(() => {
+    if (!socket || !user || !isTyping) return;
+
+    setIsTyping(false);
+    socket.emit('typing', {
+      roomId,
+      userId: user.uid,
+      userName: user.displayName,
+      isTyping: false,
+    });
+  }, 500);
 
   // 웹소켓 연결
   useEffect(() => {
@@ -158,14 +172,17 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
     }
   };
 
+  // Debounce 적용된 타이핑 감지
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isOtherUserDeleted) return;
 
-    setInputValue(e.target.value);
+    const value = e.target.value;
+    setInputValue(value);
 
     if (!socket || !user) return;
 
-    if (!isTyping && e.target.value.length > 0) {
+    // 입력이 있고 아직 타이핑 중이 아니면 타이핑 시작
+    if (value.trim() && !isTyping) {
       setIsTyping(true);
       socket.emit('typing', {
         roomId,
@@ -175,21 +192,22 @@ export default function ChatRoomModal({ roomId }: ChatRoomModalProps) {
       });
     }
 
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
+    // 입력이 비어있으면 즉시 타이핑 중지
+    if (!value.trim() && isTyping) {
+      setIsTyping(false);
+      socket.emit('typing', {
+        roomId,
+        userId: user.uid,
+        userName: user.displayName,
+        isTyping: false,
+      });
+      return;
     }
 
-    typingTimeoutRef.current = setTimeout(() => {
-      if (isTyping) {
-        setIsTyping(false);
-        socket.emit('typing', {
-          roomId,
-          userId: user.uid,
-          userName: user.displayName,
-          isTyping: false,
-        });
-      }
-    }, 2000);
+    // 타이핑 멈춘 후 500ms 뒤 자동 중지
+    if (value.trim()) {
+      stopTyping();
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
