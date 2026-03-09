@@ -4,7 +4,7 @@ export function useDebounce<T extends (...args: any[]) => any>(
     callback: T,
     delay: number
 ) {
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   return useCallback((...args: Parameters<T>) => {
     // 이전 타이머 취소
