@@ -6,6 +6,7 @@ import {
 import { db } from '../firebase';
 import { Comment, CommentWithReplies } from "../../types";
 import {createNotification} from "./notificationService";
+import {notificationBatcher} from "./notificationBatcher";
 
 // 원댓글 작성
 export const createComment = async (
@@ -31,16 +32,16 @@ export const createComment = async (
     createdAt: Date.now(),
   });
 
-  await createNotification({
-    recipientId: postAuthorId,
-    senderId: userId,
-    senderName: userName,
-    senderPhoto: userPhoto,
-    type: 'comment',
-    postId,
-    commentId: docRef.id,
-    message: `${userName}님이 댓글을 남겼습니다: ${content.slice(0, 20)}${content.length > 20 ? '...' : ''}`,
-  })
+  if (postAuthorId !== userId) {
+    notificationBatcher.addNotification(
+        postAuthorId,
+        userId,
+        userName,
+        userPhoto,
+        'comment',
+        postId
+    );
+  }
 
   return docRef.id;
 }
@@ -76,16 +77,16 @@ export const createReply = async (
     replyCount: increment(1)
   });
 
-  await createNotification({
-    recipientId: parentAuthorId,
-    senderId: userId,
-    senderName: userName,
-    senderPhoto: userPhoto,
-    type: 'reply',
-    postId,
-    commentId: docRef.id,
-    message: `${userName}님이 답글을 남겼습니다: ${content.slice(0, 20)}${content.length > 20 ? '...' : ''}`
-  });
+  if (parentAuthorId !== userId) {
+    notificationBatcher.addNotification(
+        parentAuthorId,
+        userId,
+        userName,
+        userPhoto,
+        'comment',
+        postId
+    );
+  }
 
   return docRef.id;
 };

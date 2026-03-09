@@ -23,6 +23,7 @@ import {ref, uploadBytes, getDownloadURL, deleteObject} from 'firebase/storage';
 import {createNotification} from "./notificationService";
 import {analyzeClothing} from "./aiClothingService";
 import {updateClothingStats} from "./clothingStatsService";
+import {notificationBatcher} from "./notificationBatcher";
 
 export interface CreatePostData {
   file: File;
@@ -267,16 +268,17 @@ export const toggleLike = async (
         likedBy: arrayUnion(userId)
       });
 
-      // 좋아요 알림 생성
-      await createNotification({
-        recipientId: postData.memberId,
-        senderId: userId,
-        senderName: userName,
-        senderPhoto: userPhoto,
-        type: 'like',
-        postId,
-        message: `${userName}님이 회원님의 게시물을 좋아합니다.`,
-      });
+      // 알림을 배치에 추가 (자신에게는 X)
+      if (postData.memberId !== userId) {
+        notificationBatcher.addNotification(
+            postData.memberId,
+            userId,
+            userName,
+            userPhoto,
+            'like',
+            postId
+        );
+      }
     }
 
     const updatedDoc = await getDoc(postRef);

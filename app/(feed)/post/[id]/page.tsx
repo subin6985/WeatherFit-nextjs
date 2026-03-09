@@ -11,6 +11,7 @@ import CommentSection from "../../../../components/comment/CommentSection";
 import {subscribeCommentCount} from "../../../../lib/services/commentService";
 import {useCommentStore} from "../../../../store/useCommentStore";
 import ChatButton from "../../../../components/chat/ChatButton";
+import {useDebounce} from "../../../../hooks/useDebounce";
 
 export default function PostPage() {
   const { id } = useParams<{ id: string }>();
@@ -134,6 +135,10 @@ export default function PostPage() {
     };
   }, [openMenu]);
 
+  const debouncedLikeAPI = useDebounce(async (id: string, uid: string, name: string, photo: string) => {
+    await toggleLike(id, uid, name, photo);
+  }, 1000);
+
   const handleToggleLike = async () => {
     if (!post || !user) {
       alert('로그인이 필요합니다.');
@@ -145,14 +150,20 @@ export default function PostPage() {
       return;
     }
 
+    // UI를 먼저 변경 (낙관적 업데이트)
+    const isAdding = !isLikedByMe;
+    setLikes(prev => isAdding ? prev + 1 : prev - 1);
+    setIsLikedByMe(isAdding);
+
     try {
-      setIsToggling(true);
-      await toggleLike(id as string, user.uid, user.displayName, user.photoURL);
+      // 실제 DB 업데이트는 디바운스 적용
+      await debouncedLikeAPI(id, user.uid, user.displayName, user.photoURL);
     } catch (e) {
       console.error('Failed to toggle like:', e);
+      // 실패 시 롤백
+      setLikes(likes);
+      setIsLikedByMe(isLikedByMe);
       alert('좋아요 처리에 실패했습니다.');
-    } finally {
-      setIsToggling(false);
     }
   };
 
