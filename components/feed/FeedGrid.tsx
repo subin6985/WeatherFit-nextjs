@@ -8,6 +8,7 @@ import GenderFilter from '../filter/GenderFilter';
 import TempFilter from '../filter/TempFilter';
 import { Gender, PostSummary, TempRange } from '../../types';
 import Image from "next/image";
+import { useThrottle } from "../../hooks/useThrottle";
 
 interface FeedGridProps {
   title?: string;
@@ -134,18 +135,20 @@ export default function FeedGrid({
     return () => observer.disconnect();
   }, [hasMore, loadingMore, lastDoc]);
 
-  // 스크롤 이벤트 감지
+  // throttle 적용된 스크롤 이벤트
+  const handleScroll = useThrottle(() => {
+    const el = feedScrollRef.current;
+    if (!el) return;
+    setShowTopBtn(el.scrollTop > 10);
+  }, 100);
+
   useEffect(() => {
     const el = feedScrollRef.current;
     if (!el) return;
 
-    const handleScroll = () => {
-      setShowTopBtn(el.scrollTop > 10);
-    };
-
     el.addEventListener('scroll', handleScroll);
     return () => el.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [handleScroll]);
 
   const scrollToTop = () => {
     feedScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
